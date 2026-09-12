@@ -190,7 +190,7 @@ function CityPicker({ cities, selectedCity, isOpen, onToggle, onSelect }) {
   );
 }
 
-function MapaDenuncia({ fullScreen = false }) {
+function MapaDenuncia({ fullScreen = false, reports: suppliedReports, showCityPicker = true, interactive = true }) {
   const [darkMode, setDarkMode] = useState(JSON.parse(localStorage.getItem('darkMode')) || false);
   const [modalOpen, setModalOpen] = useState(false);
   const [coords, setCoords] = useState(null);
@@ -224,8 +224,14 @@ function MapaDenuncia({ fullScreen = false }) {
     if (activeReport >= reports.length && reports.length > 0) setActiveReport(0);
   }, [activeReport, reports.length]);
 
-  // A busca continua centralizada no mapa para evitar chamadas duplicadas.
   useEffect(() => {
+    if (Array.isArray(suppliedReports)) {
+      setReports(suppliedReports);
+      const reportWithLocation = suppliedReports.find((report) => Number.isFinite(Number.parseFloat(report.latitude)) && Number.isFinite(Number.parseFloat(report.longitude)));
+      if (reportWithLocation) setCenter({ lat: Number.parseFloat(reportWithLocation.latitude), lng: Number.parseFloat(reportWithLocation.longitude) });
+      return undefined;
+    }
+
     const fetchReports = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/reportList`);
@@ -237,7 +243,7 @@ function MapaDenuncia({ fullScreen = false }) {
     };
 
     fetchReports();
-  }, []);
+  }, [suppliedReports]);
 
   function handleMapClick(lat, lng) {
     setCoords({ lat, lng });
@@ -254,7 +260,7 @@ function MapaDenuncia({ fullScreen = false }) {
     <div className="relative h-full w-full overflow-hidden bg-[var(--color-surface-muted)]">
       <MapContainer center={[-31.769, -52.341]} zoom={15} className="urban-map h-full w-full" scrollWheelZoom zoomControl>
         <TileLayer url={darkMode ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
-        <UserLocation />
+        {interactive && <UserLocation />}
 
         {reports.map((report, index) => {
           const lat = Number.parseFloat(report.latitude);
@@ -270,15 +276,15 @@ function MapaDenuncia({ fullScreen = false }) {
           );
         })}
 
-        <MapClickHandler onMapClick={handleMapClick} />
+        {interactive && <MapClickHandler onMapClick={handleMapClick} />}
         <CenterMap center={center} />
       </MapContainer>
 
-      <CityPicker cities={CITIES} selectedCity={selectedCity} isOpen={cityDropdownOpen} onToggle={() => setCityDropdownOpen((open) => !open)} onSelect={selectCity} />
+      {showCityPicker && <CityPicker cities={CITIES} selectedCity={selectedCity} isOpen={cityDropdownOpen} onToggle={() => setCityDropdownOpen((open) => !open)} onSelect={selectCity} />}
 
       {fullScreen && reports.length > 0 && <ReportCarousel reports={reports} activeReport={activeReport} onChange={setActiveReport} onPauseChange={setIsCarouselPaused} />}
 
-      <ReportModal isOpen={modalOpen} onClose={() => setModalOpen(false)} lat={coords?.lat ?? null} lng={coords?.lng ?? null} />
+      {interactive && <ReportModal isOpen={modalOpen} onClose={() => setModalOpen(false)} lat={coords?.lat ?? null} lng={coords?.lng ?? null} />}
     </div>
   );
 }

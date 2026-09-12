@@ -11,22 +11,19 @@ import {
   Settings,
   Sun,
   TriangleAlert,
-  UsersRound,
-  FileWarning,
   Users
 } from 'lucide-react';
 import Brand from './Brand';
 import { AuthContext } from '../context/AuthContext';
 
 const navigationItems = [
+  { id: 'dashboard', label: 'Administração', path: '/dashboard', icon: House, admin: true, primary: false },
+  { id: 'municipal-dashboard', label: 'Painel municipal', path: '/Prefeitura', icon: House, municipal: true, primary: false },
   { id: 'home', label: 'Início', path: '/', icon: House, primary: true },
   { id: 'map', label: 'Mapa', path: '/mapa', icon: Map, primary: true },
   { id: 'reports', label: 'Denúncias', path: '/Report', icon: TriangleAlert, primary: true },
   { id: 'chat', label: 'Chat', path: '/chat', icon: MessageSquare, primary: true },
   { id: 'community', label: 'Comunidade', path: '/Comunidade', icon: Users, primary: true },
-  { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: House, admin: true, primary: false },
-  { id: 'pending', label: 'Pendentes', path: '/pendingreports', icon: FileWarning, admin: true, primary: false },
-  { id: 'users', label: 'Usuários', path: '/userList', icon: UsersRound, admin: true, primary: false },
   { id: 'settings', label: 'Configurações', path: '/settings', icon: Settings, primary: true },
   { id: 'help', label: 'Ajuda', path: '/help', icon: CircleHelp, primary: false },
   { id: 'logout', label: 'Sair', path: '/login', icon: LogOut, action: 'logout', primary: false }
@@ -35,6 +32,7 @@ const navigationItems = [
 const isActivePath = (pathname, path) => {
   const current = pathname.toLowerCase();
   const target = path.toLowerCase();
+  if (target === '/dashboard') return ['/dashboard', '/pendingreports', '/userlist'].includes(current);
   return target === '/' ? current === '/' : current === target || current.startsWith(`${target}/`);
 };
 
@@ -56,8 +54,9 @@ export default function Navigation({ isSidebarOpen, toggleSidebar, hideMobileNav
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : document.documentElement.classList.contains('dark');
   });
-  const isAdmin = user?.role >= 1 && user?.role <= 4;
-  const visibleItems = useMemo(() => navigationItems.filter((item) => !item.admin || isAdmin), [isAdmin]);
+  const isPlatformAdmin = ['1', '2'].includes(String(user?.role));
+  const isMunicipalAdmin = String(user?.role) === '7';
+  const visibleItems = useMemo(() => navigationItems.filter((item) => (!item.admin || isPlatformAdmin) && (!item.municipal || isMunicipalAdmin)), [isPlatformAdmin, isMunicipalAdmin]);
   const primaryItems = visibleItems.filter((item) => item.primary && item.id !== 'settings').slice(0, 5);
   const moreItems = visibleItems.filter((item) => !item.primary || item.id === 'settings');
 
@@ -110,8 +109,8 @@ export default function Navigation({ isSidebarOpen, toggleSidebar, hideMobileNav
       </aside>
 
       {!hideMobileNavigation && <nav aria-label="Navegação mobile" className="fixed bottom-0 left-0 right-0 z-[1200] flex items-stretch justify-around border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 px-1 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur md:hidden">
-        {primaryItems.map((item) => { const Icon = item.icon; return <button key={item.id} type="button" aria-label={item.label} aria-current={isActivePath(location.pathname, item.path) ? 'page' : undefined} onClick={() => handleItem(item)} className={`flex min-w-14 flex-1 flex-col items-center justify-center gap-1 rounded-xl py-1 text-[var(--color-muted)] transition ${isActivePath(location.pathname, item.path) ? 'font-bold text-[var(--color-primary)]' : ''}`}><Icon size={20} /><span className="text-[10px] leading-none">{item.label}</span></button>; })}
-        <button type="button" aria-label="Mais opções" aria-expanded={isMoreOpen} onClick={() => setIsMoreOpen((value) => !value)} className={`flex min-w-14 flex-1 flex-col items-center justify-center gap-1 rounded-xl py-1 text-[var(--color-muted)] transition ${isMoreOpen ? 'font-bold text-[var(--color-primary)]' : ''}`}><MoreHorizontal size={20} /><span className="text-[10px] leading-none">Mais</span></button>
+        {primaryItems.map((item) => { const Icon = item.icon; return <button key={item.id} type="button" aria-label={item.label} aria-current={isActivePath(location.pathname, item.path) ? 'page' : undefined} onClick={() => handleItem(item)} className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl py-1 text-[var(--color-muted)] transition ${isActivePath(location.pathname, item.path) ? 'font-bold text-[var(--color-primary)]' : ''}`}><Icon size={20} /><span className="max-w-full truncate text-[10px] leading-none">{item.label}</span></button>; })}
+        <button type="button" aria-label="Mais opções" aria-expanded={isMoreOpen} onClick={() => setIsMoreOpen((value) => !value)} className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl py-1 text-[var(--color-muted)] transition ${isMoreOpen ? 'font-bold text-[var(--color-primary)]' : ''}`}><MoreHorizontal size={20} /><span className="max-w-full truncate text-[10px] leading-none">Mais</span></button>
       </nav>}
 
       {!hideMobileNavigation && isMoreOpen && <div className="fixed inset-x-3 bottom-[76px] z-[1201] rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-2 shadow-lg md:hidden">
