@@ -91,7 +91,7 @@ A aplicação foi desenvolvida com foco em:
 
 ## 👨‍💻 Desenvolvimento
 
-Projeto idealizado e desenvolvido por **Felipe Rosa**, com foco em desenvolvimento full-stack, APIs REST, aplicações web responsivas e soluções digitais para problemas reais.
+Projeto idealizado por **Felipe Rosa** e desenvolvido em conjunto com **Lennon Costa** & **João Beiersdorf**, com foco em desenvolvimento full-stack, APIs REST, aplicações web responsivas e soluções digitais para problemas reais.
 
 ---
 
