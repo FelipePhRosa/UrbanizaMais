@@ -1,0 +1,20 @@
+AS REFERENCIAS DEVEM SER SEGUIDAS A RISCA
+TUDO QUE FOR NOVO DEVE SEGUIR A MESMA VIBE DAS REFERENCIAS PARA TUDO ESTAR REDONDO SEM NENHUMA INCONSISTENCIA VISUAL
+
+Contexto de algumas seções:
+Seção comunidade - Serve para o prefeito anunciar projeto para solucionar uma demanda de um cidadão que criou uma denuncia.
+Nela, o prefeito após criar o Projeto Urbaniza 01, os usuários poderão clicar neste projeto, e visualizar mais informações, como orçamento divulgado, trabalho a ser realizado, texto e descrição das motivações  da obra, objetivos da obra e uma seção de comentários para feedbacks, botão de like como as denuncias já possuem.
+
+Seção Denúncias - Aqui, todos os usuários poderão ver todas as denúncias já aprovadas na plataforma. Aqui deve ter um visual bem bacana e autentico, como um histórico geral da comunidade daquela cidade. Observação importante, o filtro deve começar com cidade atual do usuario.
+Seção Denúncias Pendentes - Aqui é onde nosso suporte irá trabalhar, aqui as denuncias que os usuarios criam irá para essa pendencia, onde o suporte irá analisar a veracidade e conteudo, podendo tomar liberdade de aprovar ou rejeitar uma denuncia. Deve ser contemplado com novo design autentico.
+Seção usuários - Aqui apenas ADM'S irão enxergar, então capriche
+
+Seção Configurações - Está uma leve bagunça, mas eu gosto deste layout. Quero que voce modernize ele com os melhores padrões de boas praticas, usabilidade e conceitos como mobile-first.
+Seção Ajuda - Extremamente amadora, você deve criar um Help & Questions profissional.
+Seção Chat da Comunidade - Como na foto referencia que adicionei na pasta, acho que da para deixar um visual legal, é um chat onde pessoas próximas poderão comentar sobre as situações do seu bairro.
+Seção Mapa de problemas - Como na foto referencia que adicionei na pasta, essa seção deve ser composta pelo mapa full screen, e essas abas brancas em cima do botão "back to list" devem ser as denuncias rolando com um timer de sei lá algo a cada 3 segundos, rolar para a próxima denuncia. (permitindo que o usuario clique na denuncia para saber mais )
+Seção Ajuda² - Deve ser adicionado um How It Works na seção ajuda, desenvolvendo a idéia para o usuário comum, como usar a plataforma, criar denuncias e explicação do processo de aprovação e critérios para a mesma.
+seção dashboard - deve ser redesenhada como as imagens de referencia
+caso precise logar na plataforma pra visualizar
+usuario: adm2
+senha: Lolzinho1@
