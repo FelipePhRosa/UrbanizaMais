@@ -18,6 +18,7 @@ import {
 import Brand from './Brand';
 import { AuthContext } from '../context/AuthContext';
 
+
 const navigationItems = [
   { id: 'home', label: 'Início', path: '/', icon: House, primary: true },
   { id: 'map', label: 'Mapa', path: '/mapa', icon: Map, primary: true },
