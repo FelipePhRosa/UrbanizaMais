@@ -45,7 +45,7 @@ export default function Home() {
   }, [reports]);
 
   return <Layout>
-    <main className="w-full max-w-[1440px] px-4 py-4 md:px-8 md:py-5">
+    <main className="w-full px-4 py-4 md:px-8 md:py-5">
       <header className="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <div><p className="urban-eyebrow">Visão da cidade</p><h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--color-ink)]">Olá, {user?.nameUser?.split(' ')[0] || 'você'}.</h1><p className="mt-1 text-sm text-[var(--color-muted)]">Acompanhe os relatos públicos da sua região.</p></div>
         <Link to="/reportar" className="hidden h-10 items-center gap-2 rounded-xl bg-[var(--color-primary)] px-4 text-sm font-bold text-white transition hover:brightness-95 sm:inline-flex"><Plus size={16} /> Novo relato</Link>

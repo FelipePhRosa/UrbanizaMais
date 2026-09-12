@@ -5,6 +5,7 @@ import { UsersRound, Search, Filter, AlertCircle } from "lucide-react";
 import ModalUpdate from "./UpdateRole";
 import toast from "react-hot-toast";
 import { Check, X, Clock } from "lucide-react";
+import AdminBackLink from './AdminBackLink';
 
 export default function UserList() {
   const { token, user: currentUser } = useContext(AuthContext);
@@ -247,6 +248,7 @@ export default function UserList() {
   return (
     <Layout>
       <div className="p-6 max-w-7xl mx-auto">
+        <AdminBackLink />
         <h1 className="font-semibold text-3xl dark:text-blue-500">
           Usuários Cadastrados
         </h1>

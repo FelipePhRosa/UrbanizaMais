@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
+import AdminBackLink from './AdminBackLink';
 
 const PUBLIC_STATUSES = ['aprovado', 'resolvida'];
 
@@ -140,7 +141,7 @@ function Report() {
 
   return (
     <Layout>
-      <main className="mx-auto max-w-[1500px] px-4 py-5 md:px-8">
+      <main className="mx-auto max-w-[1500px] px-4 py-5 md:px-8"><AdminBackLink />
         <header className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
             <p className="urban-eyebrow">Participação cidadã</p>

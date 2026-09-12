@@ -8,14 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  api.get("/").then((res) => {
-    console.log("BACKEND OK:", res.data);
-  }).catch((err) => {
-    console.log("BACKEND ERROR:", err);
-  });
-}, []);
-
-  useEffect(() => {
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       localStorage.setItem('token', token);

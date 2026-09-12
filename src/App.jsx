@@ -27,6 +27,7 @@ import Comunidade from "./pages/Comunidade";
 import AuthCallback from "./pages/AuthCallback"
 import ProtectRouter from "./components/ProtectRouter";
 import DashboardAdmin from "./pages/DashboardAdmin";
+import DashboardMunicipal from "./pages/DashboardMunicipal";
 
 function App() {
   return (
@@ -42,7 +43,7 @@ function App() {
 
           <Route element={<ProtectRouter />}>
             <Route path="/dashboard" element={<DashboardAdmin />} />
-            <Route path="/Prefeitura" element={<DashboardAdmin />} />
+            <Route path="/Prefeitura" element={<DashboardMunicipal />} />
             <Route path="/pendingreports" element={<PendingReports />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/mapa" element={<Mapa />} />
