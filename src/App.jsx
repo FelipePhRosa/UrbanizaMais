@@ -27,7 +27,7 @@ import Comunidade from "./pages/Comunidade";
 import AuthCallback from "./pages/AuthCallback"
 import ProtectRouter from "./components/ProtectRouter";
 import DashboardAdmin from "./pages/DashboardAdmin";
-import DashboardMunicipal from "./pages/DashboardMunicipal";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
@@ -35,16 +35,16 @@ function App() {
       <AuthProvider>
         <Toaster position="top-left" />
         <Routes>
-          <Route path="/" element={<HomeWrapper />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/redefinirsenha" element={<RedefinirSenha />} />
 
           <Route element={<ProtectRouter />}>
-          <Route path="/home" element={<HomeWrapper />} />
+            <Route path="/home" element={<HomeWrapper />} />
             <Route path="/dashboard" element={<DashboardAdmin />} />
-            <Route path="/Prefeitura" element={<DashboardMunicipal />} />
+            <Route path="/Prefeitura" element={<DashboardAdmin />} />
             <Route path="/pendingreports" element={<PendingReports />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/mapa" element={<Mapa />} />
