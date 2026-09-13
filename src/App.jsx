@@ -42,6 +42,7 @@ function App() {
           <Route path="/redefinirsenha" element={<RedefinirSenha />} />
 
           <Route element={<ProtectRouter />}>
+          <Route path="/home" element={<HomeWrapper />} />
             <Route path="/dashboard" element={<DashboardAdmin />} />
             <Route path="/Prefeitura" element={<DashboardMunicipal />} />
             <Route path="/pendingreports" element={<PendingReports />} />
