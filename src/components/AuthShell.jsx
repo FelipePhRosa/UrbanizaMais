@@ -2,10 +2,12 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Brand from './Brand';
 
-export default function AuthShell({ eyebrow = 'Urbaniza+', title, description, backTo = '/login', backLabel = 'Voltar ao login', children }) {
+export default function AuthShell({ eyebrow = 'Urbaniza+', title, description, backTo = '/login', backLabel = 'Voltar ao login', sideImage, children }) {
   return (
     <main className="grid min-h-screen bg-[var(--color-surface-muted)] lg:grid-cols-[minmax(360px,.9fr)_minmax(520px,1.1fr)]">
       <section className="relative hidden overflow-hidden bg-[var(--color-ink)] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
+        {sideImage && <img src={sideImage} alt="" className="absolute inset-0 h-full w-full object-cover" />}
+        {sideImage && <div className="absolute inset-0 bg-black/35" />}
         <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[var(--color-primary)]/35 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-[#8b5cf6]/20 blur-3xl" />
         <div className="relative"><Brand light /></div>
