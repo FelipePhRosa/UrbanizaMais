@@ -20,7 +20,7 @@ import { AuthContext } from '../context/AuthContext';
 const navigationItems = [
   { id: 'dashboard', label: 'Administração', path: '/dashboard', icon: House, admin: true, primary: false },
   { id: 'municipal-dashboard', label: 'Painel municipal', path: '/Prefeitura', icon: House, municipal: true, primary: false },
-  { id: 'home', label: 'Início', path: '/', icon: House, primary: true },
+  { id: 'home', label: 'Início', path: '/home', icon: House, primary: true },
   { id: 'map', label: 'Mapa', path: '/mapa', icon: Map, primary: true },
   { id: 'reports', label: 'Denúncias', path: '/Report', icon: TriangleAlert, primary: true },
   { id: 'chat', label: 'Chat', path: '/chat', icon: MessageSquare, primary: true },
@@ -92,7 +92,7 @@ export default function Navigation({ isSidebarOpen, toggleSidebar, hideMobileNav
           </span>
         </button>
 
-        <nav aria-label="Navegação principal" className="flex-1 space-y-1 overflow-y-auto">
+        <nav aria-label="Navegação principal" className="flex-1 min-h-0 space-y-0.5 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {visibleItems.filter((item) => item.id !== 'logout').map((item) => {
             const Icon = item.icon;
             return <button key={item.id} type="button" aria-current={isActivePath(location.pathname, item.path) ? 'page' : undefined} onClick={() => handleItem(item)} title={!isSidebarOpen ? item.label : undefined} className={`${itemClass(item)} w-full ${isSidebarOpen ? '' : 'justify-center px-0'}`}><Icon size={19} /><span className={isSidebarOpen ? 'truncate' : 'sr-only'}>{item.label}</span></button>;
