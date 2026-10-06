@@ -105,12 +105,7 @@ function Report() {
       );
 
       const data = await response.json();
-
-      console.log('📋 /reportList:', data);
-
       const source = Array.isArray(data) ? data : data.data;
-
-      console.log('📋 PRIMEIRO REPORT:', source?.[0]);
 
       setReports(
         Array.isArray(source)
