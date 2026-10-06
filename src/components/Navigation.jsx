@@ -59,7 +59,9 @@ export default function Navigation({ isSidebarOpen, toggleSidebar, hideMobileNav
   const isMunicipalAdmin = String(user?.role) === '7';
   const visibleItems = useMemo(() => navigationItems.filter((item) => (!item.admin || isPlatformAdmin) && (!item.municipal || isMunicipalAdmin)), [isPlatformAdmin, isMunicipalAdmin]);
   const primaryItems = visibleItems.filter((item) => item.primary && item.id !== 'settings').slice(0, 5);
-  const moreItems = visibleItems.filter((item) => !item.primary || item.id === 'settings');
+  const moreItems = visibleItems.filter(
+    (item) => item.id !== 'logout' && (!item.primary || item.id === 'settings')
+  );
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
