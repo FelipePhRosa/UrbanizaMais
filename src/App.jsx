@@ -24,9 +24,11 @@ import ModalUpdate from "./components/UpdateRole";
 import RedefinirSenha from "./components/RedefinirSenha";
 import VerifyEmail from "./components/VerifyEmail";
 import Comunidade from "./pages/Comunidade";
-import AuthCallback from "./pages/AuthCallback"
+import NewsEditor from "./pages/NewsEditor";
+import NewsPage from "./pages/NewsPage";
 import ProtectRouter from "./components/ProtectRouter";
 import DashboardAdmin from "./pages/DashboardAdmin";
+import DashboardMunicipal from "./pages/DashboardMunicipal";
 import LandingPage from "./pages/LandingPage";
 
 function App() {
@@ -38,17 +40,20 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/redefinirsenha" element={<RedefinirSenha />} />
+          <Route path="/verifyEmail" element={<VerifyEmail />} />
+          <Route path="/noticia/:id" element={<NewsPage />} />
 
           <Route element={<ProtectRouter />}>
             <Route path="/home" element={<HomeWrapper />} />
             <Route path="/dashboard" element={<DashboardAdmin />} />
-            <Route path="/Prefeitura" element={<DashboardAdmin />} />
+            <Route path="/Prefeitura" element={<DashboardMunicipal />} />
             <Route path="/pendingreports" element={<PendingReports />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/mapa" element={<Mapa />} />
             <Route path="/Comunidade" element={<Comunidade />} />
+            <Route path="/Comunidade/nova" element={<NewsEditor />} />
+            <Route path="/Comunidade/:id/editar" element={<NewsEditor />} />
             <Route path="/Report" element={<Report />} />
             <Route path="/reportar" element={<ReportarProblemas />} />
             <Route path="/userList" element={<UserList />} />
@@ -62,7 +67,6 @@ function App() {
             <Route path="/notifications" element={<Notificacoes />} />
             <Route path="/preferences" element={<Preferencias />} />
             <Route path="/report/:id" element={<ReportPage />} />
-            <Route path="/verifyEmail" element={<VerifyEmail />} />
           </Route>
         </Routes>
       </AuthProvider>

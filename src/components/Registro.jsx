@@ -15,26 +15,47 @@ export default function Registro() {
   const [birthDate, setBirthDate] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [stateId, setStateId] = useState('');
+  const [states, setStates] = useState([]);
   const [cityId, setCityId] = useState('');
   const [cities, setCities] = useState([]);
+  const [loadingCities, setLoadingCities] = useState(false);
   const [neighborhoods, setNeighborhoods] = useState([]);
+  const [loadingNeighborhoods, setLoadingNeighborhoods] = useState(false);
   const [neighborhoodId, setNeighborhoodId] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchCities() {
-      try { const res = await fetch(`${import.meta.env.VITE_API_URL}/allCities`); if (!res.ok) throw new Error('Erro ao buscar cidades'); setCities(await res.json()); }
+    async function fetchStates() {
+      try { const res = await fetch(`${import.meta.env.VITE_API_URL}/states`); if (!res.ok) throw new Error('Erro ao buscar estados'); setStates(await res.json()); }
       catch (err) { setError(err.message); }
     }
-    fetchCities();
+    fetchStates();
   }, []);
+
+  useEffect(() => {
+    if (!stateId) { setCities([]); setCityId(''); return; }
+    async function fetchCities() {
+      setLoadingCities(true);
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/allCities?state_id=${stateId}`);
+        if (!res.ok) throw new Error('Erro ao buscar cidades');
+        setCities(await res.json());
+      } catch (err) { setError(err.message); setCities([]); }
+      finally { setLoadingCities(false); }
+    }
+    fetchCities();
+  }, [stateId]);
 
   useEffect(() => {
     if (!cityId) { setNeighborhoods([]); setNeighborhoodId(''); return; }
     async function fetchNeighborhoods() {
-      try { const res = await fetch(`${import.meta.env.VITE_API_URL}/neighborhood/${cityId}`); if (!res.ok) throw new Error('Erro ao buscar bairros'); const data = await res.json(); setNeighborhoods(data.InfNeighborhoods); }
-      catch (err) { setError(err.message); }
+      setLoadingNeighborhoods(true);
+      setNeighborhoodId('');
+      try { const res = await fetch(`${import.meta.env.VITE_API_URL}/neighborhood/${cityId}`); if (!res.ok) throw new Error('Erro ao buscar bairros'); const data = await res.json(); setNeighborhoods(data.InfNeighborhoods ?? data); }
+      catch (err) { setError(err.message); setNeighborhoods([]); }
+      finally { setLoadingNeighborhoods(false); }
     }
     fetchNeighborhoods();
   }, [cityId]);
@@ -49,7 +70,7 @@ export default function Registro() {
     e.preventDefault();
     if (password !== confirmPassword) { setError('As senhas não coincidem'); return; }
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nameUser, fullName, email, telefone, birth_date: birthDate, city_id: cityId, neighborhood_id: neighborhoodId, password }) });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nameUser, fullName, email, telefone, birth_date: birthDate, city_id: cityId, neighborhood_id: neighborhoodId || null, password }) });
       if (!res.ok) { const errorData = await res.json(); throw new Error(errorData.message || 'Erro ao registrar'); }
       const data = await res.json();
       console.log('Registro response:', data);
@@ -95,9 +116,22 @@ export default function Registro() {
           <input type="date" className={fieldClass} value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
         </label>
         <label>
+          <span className={labelClass}>Estado</span>
+          <select className={fieldClass} value={stateId} onChange={(e) => { setStateId(e.target.value); setCityId(''); }} required>
+            <option value="">Selecione o estado</option>
+            {states.map((state) => (
+              <option key={state.id} value={state.id}>
+                {state.name} ({state.uf})
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label>
           <span className={labelClass}>Cidade</span>
-          <select className={fieldClass} value={cityId} onChange={(e) => setCityId(e.target.value)} required>
-            <option value="">Selecione</option>
+          <select className={fieldClass} value={cityId} onChange={(e) => setCityId(e.target.value)} required disabled={!stateId || loadingCities}>
+            <option value="">{!stateId ? 'Selecione primeiro o estado' : loadingCities ? 'Carregando...' : 'Selecione a cidade'}</option>
             {cities.map((city) => (
               <option key={city.id} value={city.id}>
                 {city.name}
@@ -105,18 +139,18 @@ export default function Registro() {
             ))}
           </select>
         </label>
+        <label>
+          <span className={labelClass}>Bairro <span className="font-normal text-[var(--color-muted)]">(opcional)</span></span>
+          <select className={fieldClass} value={neighborhoodId} onChange={(e) => setNeighborhoodId(e.target.value)} disabled={!cityId || loadingNeighborhoods || neighborhoods.length === 0}>
+            <option value="">{!cityId ? 'Selecione primeiro a cidade' : loadingNeighborhoods ? 'Carregando...' : neighborhoods.length === 0 ? 'Nenhum bairro cadastrado' : 'Selecione seu bairro'}</option>
+            {neighborhoods.map((neighborhood) => (
+              <option key={neighborhood.id} value={neighborhood.id}>
+                {neighborhood.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
-      <label>
-        <span className={labelClass}>Bairro</span>
-        <select className={fieldClass} value={neighborhoodId} onChange={(e) => setNeighborhoodId(e.target.value)} required disabled={!cityId}>
-          <option value="">Selecione seu bairro</option>
-          {neighborhoods.map((neighborhood) => (
-            <option key={neighborhood.id} value={neighborhood.id}>
-              {neighborhood.name}
-            </option>
-          ))}
-        </select>
-      </label>
       <div className="grid gap-2 sm:grid-cols-2 pt-2">
       <label>
         <span className={labelClass}>Senha</span>

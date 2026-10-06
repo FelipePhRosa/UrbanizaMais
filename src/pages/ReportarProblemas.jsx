@@ -21,17 +21,47 @@ export default function ReportarProblemas() {
   const [tipoProblema, setTipoProblema] = useState(null);
   const [endereco, setEndereco] = useState('');
   const [urlImagem, setUrlImagem] = useState('');
+  const [states, setStates] = useState([]);
+  const [selectedState, setSelectedState] = useState('');
   const [cities, setCities] = useState([]);
+  const [loadingCities, setLoadingCities] = useState(false);
   const [selectedCity, setSelectedCity] = useState('');
+  const [neighborhoods, setNeighborhoods] = useState([]);
+  const [loadingNeighborhoods, setLoadingNeighborhoods] = useState(false);
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/allCities`, {
+    fetch(`${import.meta.env.VITE_API_URL}/states`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((response) => response.json())
+      .then(setStates)
+      .catch(console.error);
+  }, [token]);
+
+  useEffect(() => {
+    if (!selectedState) { setCities([]); setSelectedCity(''); return; }
+    setLoadingCities(true);
+    fetch(`${import.meta.env.VITE_API_URL}/allCities?state_id=${selectedState}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((response) => response.json())
       .then(setCities)
-      .catch(console.error);
-  }, [token]);
+      .catch(console.error)
+      .finally(() => setLoadingCities(false));
+  }, [selectedState, token]);
+
+  useEffect(() => {
+    if (!selectedCity) { setNeighborhoods([]); setSelectedNeighborhood(''); return; }
+    setLoadingNeighborhoods(true);
+    fetch(`${import.meta.env.VITE_API_URL}/neighborhood/${selectedCity}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((response) => response.json())
+      .then((data) => setNeighborhoods(data.InfNeighborhoods ?? data))
+      .catch(console.error)
+      .finally(() => setLoadingNeighborhoods(false));
+  }, [selectedCity, token]);
 
   const resetForm = () => {
     setTitulo('');
@@ -39,14 +69,21 @@ export default function ReportarProblemas() {
     setTipoProblema(null);
     setEndereco('');
     setUrlImagem('');
+    setSelectedState('');
     setSelectedCity('');
+    setSelectedNeighborhood('');
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!selectedCity) {
-      alert('Selecione a cidade do problema');
+    if (!selectedState || !selectedCity) {
+      alert('Selecione o estado e a cidade do problema');
+      return;
+    }
+
+    if (!selectedNeighborhood) {
+      alert('Selecione o bairro do problema');
       return;
     }
 
@@ -56,6 +93,7 @@ export default function ReportarProblemas() {
       category_id: tipoProblema,
       address: endereco,
       city_id: selectedCity,
+      neighborhood_id: selectedNeighborhood,
       latitude: 0,
       longitude: 0,
       image: urlImagem
@@ -98,7 +136,9 @@ export default function ReportarProblemas() {
         <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-sm md:p-6">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block md:col-span-2"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Título <b className="text-[var(--color-danger)]">*</b></span><input value={titulo} onChange={(event) => setTitulo(event.target.value)} required placeholder="Ex.: Buraco na Rua Dom Pedro" className={FIELD} /></label>
-            <label className="block"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Cidade <b className="text-[var(--color-danger)]">*</b></span><select value={selectedCity} onChange={(event) => setSelectedCity(Number(event.target.value))} required className={FIELD}><option value="">Selecione a cidade</option>{cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}</select></label>
+            <label className="block"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Estado <b className="text-[var(--color-danger)]">*</b></span><select value={selectedState} onChange={(event) => { setSelectedState(Number(event.target.value)); setSelectedCity(''); }} required className={FIELD}><option value="">Selecione o estado</option>{states.map((state) => <option key={state.id} value={state.id}>{state.name} ({state.uf})</option>)}</select></label>
+            <label className="block"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Cidade <b className="text-[var(--color-danger)]">*</b></span><select value={selectedCity} onChange={(event) => setSelectedCity(Number(event.target.value))} required disabled={!selectedState || loadingCities} className={`${FIELD} disabled:cursor-not-allowed disabled:opacity-50`}><option value="">{!selectedState ? 'Selecione primeiro o estado' : loadingCities ? 'Carregando...' : 'Selecione a cidade'}</option>{cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}</select></label>
+            <label className="block"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Bairro <b className="text-[var(--color-danger)]">*</b></span><select value={selectedNeighborhood} onChange={(event) => setSelectedNeighborhood(Number(event.target.value))} required disabled={!selectedCity || loadingNeighborhoods} className={`${FIELD} disabled:cursor-not-allowed disabled:opacity-50`}><option value="">{!selectedCity ? 'Selecione primeiro a cidade' : loadingNeighborhoods ? 'Carregando...' : neighborhoods.length === 0 ? 'Nenhum bairro cadastrado' : 'Selecione o bairro'}</option>{neighborhoods.map((neighborhood) => <option key={neighborhood.id} value={neighborhood.id}>{neighborhood.name}</option>)}</select></label>
             <label className="block"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Endereço <b className="text-[var(--color-danger)]">*</b></span><span className="relative block"><MapPin size={15} className="absolute left-3 top-3 text-[var(--color-muted)]" /><input value={endereco} onChange={(event) => setEndereco(event.target.value)} required placeholder="Rua, número e bairro" className={`${FIELD} pl-9`} /></span></label>
             <label className="block md:col-span-2"><span className="mb-1.5 block text-xs font-semibold text-[var(--color-ink)]">Descrição <b className="text-[var(--color-danger)]">*</b></span><textarea value={descricao} onChange={(event) => setDescricao(event.target.value)} required rows={4} placeholder="Descreva o que aconteceu e onde podemos encontrar o problema." className={`${FIELD} h-auto py-2.5`} /></label>
           </div>

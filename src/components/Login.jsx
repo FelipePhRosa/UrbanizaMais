@@ -1,9 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { useGoogleLogin } from '@react-oauth/google';
-import toast from 'react-hot-toast';
-import { ArrowRight, Chrome, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
 import loginimg from '../assets/login.jpg';
 import Brand from './Brand';
 
@@ -13,7 +11,6 @@ export default function Login() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const googleLogin = useGoogleLogin({ flow: 'auth-code', ux_mode: 'redirect', onSuccess: () => toast.success('Login bem sucedido!'), redirect_uri: `${import.meta.env.VITE_API_URL}/auth/google/callback`, onError: console.error });
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -21,7 +18,7 @@ export default function Login() {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identifier, password }) });
       if (!res.ok) throw new Error('Login inválido');
       const data = await res.json();
-      login(data.token, { userId: data.userId, nameUser: data.name, fullName: data.fullName, birth_date: data.birth_date, email: data.email, telefone: data.telefone, role: data.role, avatar_url: data.avatar_url, is_verified: data.is_verified, requiresOTP: data.requiresOTP });
+      login(data.token, { userId: data.userId, nameUser: data.nameUser, fullName: data.fullName, birth_date: data.birth_date, email: data.email, telefone: data.telefone, role: data.role, avatar_url: data.avatar_url, is_verified: data.is_verified, requiresOTP: data.requiresOTP });
       navigate(data.requiresOTP === 'true' || data.requiresOTP === true ? '/verifyEmail' : '/home');
       setError(null);
     } catch (err) {
@@ -73,13 +70,6 @@ export default function Login() {
             {error && <p role="alert" className="rounded-xl bg-[#fff1f1] px-3 py-2 text-sm font-medium text-[#c44747]">{error}</p>}
             <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-tint)]">Entrar <ArrowRight size={17} /></button>
           </form>
-
-          <div className="my-6 flex items-center gap-3 text-xs text-[var(--color-muted)]">
-            <span className="h-px flex-1 bg-[var(--color-border)]" />
-            <span>ou continue com</span>
-            <span className="h-px flex-1 bg-[var(--color-border)]" />
-          </div>
-          <button type="button" onClick={() => googleLogin()} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-ink)] transition hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-tint)]"><Chrome size={18} className="text-[var(--color-primary)]" /> Continuar com Google</button>
 
           <div className="mt-7 flex items-center justify-between gap-4 text-sm">
             <span className="text-[var(--color-muted)]">Ainda não tem conta?</span>

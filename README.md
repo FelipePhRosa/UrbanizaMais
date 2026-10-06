@@ -30,7 +30,7 @@ Além da participação da população, a plataforma oferece ferramentas adminis
 | 💬 Comunidade em tempo real | Chat comunitário integrado ao Firebase |
 | 📊 Dashboard administrativo | Métricas e indicadores para acompanhamento da situação da cidade |
 | 👥 Gestão de usuários | Ferramentas administrativas para controle da plataforma |
-| 🔐 Autenticação completa | Login tradicional, Google, recuperação de senha e autenticação por OTP |
+| 🔐 Autenticação completa | Login tradicional, recuperação de senha e autenticação por OTP |
 | 📱 Interface responsiva | Experiência adaptada para desktop, tablet e dispositivos móveis |
 
 ## 🧩 Arquitetura
@@ -65,7 +65,7 @@ Urbaniza+
 
 **Serviços e integrações**
 - Firebase
-- Google Authentication
+- Resend (envio de e-mails transacionais)
 - OTP
 - Mapas e geolocalização
 

@@ -46,7 +46,10 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
   const [tipoProblema, setTipoProblema] = useState(null);
   const [endereco, setEndereco] = useState('');
   const [imagens, setImagens] = useState([]);
+  const [states, setStates] = useState([]);
+  const [selectedState, setSelectedState] = useState('');
   const [cities, setCities] = useState([]);
+  const [loadingCities, setLoadingCities] = useState(false);
   const [selectedCity, setSelectedCity] = useState('');
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
@@ -55,18 +58,42 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
   useEffect(() => {
     if (!isOpen) return;
 
-    async function fetchCities() {
+    async function fetchStates() {
       try {
-        const response = await fetch(`${API}/allCities`, { headers: { Authorization: `Bearer ${token}` } });
-        if (!response.ok) throw new Error('Erro ao buscar cidades');
-        setCities(await response.json());
+        const response = await fetch(`${API}/states`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!response.ok) throw new Error('Erro ao buscar estados');
+        setStates(await response.json());
       } catch (error) {
         console.error(error);
       }
     }
 
-    fetchCities();
+    fetchStates();
   }, [isOpen, token]);
+
+  useEffect(() => {
+    if (!isOpen || !selectedState) {
+      setCities([]);
+      return;
+    }
+
+    async function fetchCities() {
+      setLoadingCities(true);
+      setSelectedCity('');
+      try {
+        const response = await fetch(`${API}/allCities?state_id=${selectedState}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!response.ok) throw new Error('Erro ao buscar cidades');
+        setCities(await response.json());
+      } catch (error) {
+        console.error(error);
+        setCities([]);
+      } finally {
+        setLoadingCities(false);
+      }
+    }
+
+    fetchCities();
+  }, [isOpen, selectedState, token]);
 
   useEffect(() => {
     if (!selectedCity) {
@@ -139,6 +166,7 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
       setDescricao('');
       setTipoProblema(null);
       setEndereco('');
+      setSelectedState('');
       setSelectedCity('');
       setSelectedNeighborhood('');
       imagens.forEach((imagem) => URL.revokeObjectURL(imagem.preview));
@@ -203,9 +231,10 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Cidade"><select value={selectedCity} onChange={(event) => setSelectedCity(Number(event.target.value))} className={inputClasses()} required><option value="">Selecione a cidade</option>{cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}</select></Field>
-            <Field label="Bairro"><select value={selectedNeighborhood} onChange={(event) => setSelectedNeighborhood(Number(event.target.value))} disabled={!selectedCity || loadingNeighborhoods} className={`${inputClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{loadingNeighborhoods ? 'Carregando...' : !selectedCity ? 'Selecione uma cidade primeiro' : neighborhoods.length === 0 ? 'Nenhum bairro encontrado' : 'Selecione o bairro'}</option>{neighborhoods.map((neighborhood) => <option key={neighborhood.id} value={neighborhood.id}>{neighborhood.name}</option>)}</select></Field>
+            <Field label="Estado"><select value={selectedState} onChange={(event) => { setSelectedState(Number(event.target.value)); setSelectedCity(''); }} className={inputClasses()} required><option value="">Selecione o estado</option>{states.map((state) => <option key={state.id} value={state.id}>{state.name} ({state.uf})</option>)}</select></Field>
+            <Field label="Cidade"><select value={selectedCity} onChange={(event) => setSelectedCity(Number(event.target.value))} disabled={!selectedState || loadingCities} className={`${inputClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{!selectedState ? 'Selecione primeiro o estado' : loadingCities ? 'Carregando...' : 'Selecione a cidade'}</option>{cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}</select></Field>
           </div>
+          <Field label="Bairro"><select value={selectedNeighborhood} onChange={(event) => setSelectedNeighborhood(Number(event.target.value))} disabled={!selectedCity || loadingNeighborhoods} className={`${inputClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{loadingNeighborhoods ? 'Carregando...' : !selectedCity ? 'Selecione primeiro a cidade' : neighborhoods.length === 0 ? 'Nenhum bairro cadastrado' : 'Selecione o bairro'}</option>{neighborhoods.map((neighborhood) => <option key={neighborhood.id} value={neighborhood.id}>{neighborhood.name}</option>)}</select></Field>
 
           <Field label="Endereço"><textarea value={endereco} onChange={(event) => setEndereco(event.target.value)} placeholder="Confirme o endereço da denúncia" className={`${inputClasses()} min-h-20 resize-y`} required /></Field>
 

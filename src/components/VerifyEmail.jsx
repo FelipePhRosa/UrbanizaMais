@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import AuthShell from './AuthShell';
 
 export default function VerifyEmail() {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState(user?.email || '');
   const [code, setCode] = useState('');
@@ -16,13 +16,25 @@ export default function VerifyEmail() {
     e.preventDefault();
     if (!email || !code) { setError('Preencha todos os campos.'); return; }
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code }) });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Erro ao verificar e-mail.');
+      const u = data.user || {};
+      login(data.token, {
+        userId: u.id,
+        nameUser: u.nameUser,
+        fullName: u.fullName,
+        email: u.email,
+        role: u.role,
+        avatar_url: u.avatar_url,
+        telefone: u.telefone,
+        city_id: u.city_id,
+        neighborhood_id: u.neighborhood_id,
+        is_verified: 1,
+      });
       setMensagem('E-mail verificado com sucesso!');
-      setUser((prev) => ({ ...prev, is_verified: 1 }));
       setError(null);
-      navigate('/settings');
+      navigate('/home');
     } catch (err) { setError(err.message || String(err)); }
   }
 
