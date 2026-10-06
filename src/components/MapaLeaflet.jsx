@@ -2,10 +2,20 @@ import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { ChevronRight, List, MapPin } from 'lucide-react';
+import { ChevronRight, List, LocateFixed, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MiniModal from './MiniModal';
 import ReportModal from './ReportModal';
+
+// O evento 'storage' não dispara na mesma aba; avisamos nós mesmos quando 'darkMode' é gravado
+if (typeof window !== 'undefined' && !window.__darkModePatched) {
+  window.__darkModePatched = true;
+  const originalSetItem = Storage.prototype.setItem;
+  Storage.prototype.setItem = function setItem(key, value) {
+    originalSetItem.call(this, key, value);
+    if (key === 'darkMode') window.dispatchEvent(new Event('darkModeChange'));
+  };
+}
 
 const CITIES = [
   { name: 'Pelotas', lat: -31.765, lng: -52.337 },
@@ -60,8 +70,12 @@ function createReportMarker(report, nearbyCount) {
 function UserLocation() {
   const map = useMap();
   const userMarkerRef = useRef(null);
+  const lastPositionRef = useRef(null);
+  const buttonRef = useRef(null);
+  const supported = typeof navigator !== 'undefined' && 'geolocation' in navigator;
 
   useEffect(() => {
+    if (buttonRef.current) L.DomEvent.disableClickPropagation(buttonRef.current);
     if (!navigator.geolocation) return;
 
     const userIcon = L.divIcon({
@@ -75,6 +89,8 @@ function UserLocation() {
       (position) => {
         const { latitude, longitude } = position.coords;
         const latlng = [latitude, longitude];
+        const isFirstFix = !lastPositionRef.current;
+        lastPositionRef.current = latlng;
 
         if (!userMarkerRef.current) {
           userMarkerRef.current = L.marker(latlng, { icon: userIcon }).addTo(map);
@@ -82,7 +98,7 @@ function UserLocation() {
           userMarkerRef.current.setLatLng(latlng);
         }
 
-        map.setView(latlng, map.getZoom());
+        if (isFirstFix) map.setView(latlng, map.getZoom());
       },
       () => console.error('Erro ao obter localização'),
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 },
@@ -91,7 +107,31 @@ function UserLocation() {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [map]);
 
-  return null;
+  function goToUser() {
+    const fly = (latlng) => map.flyTo(latlng, Math.max(map.getZoom(), 16));
+    if (lastPositionRef.current) return fly(lastPositionRef.current);
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => fly([coords.latitude, coords.longitude]),
+      () => alert('Não foi possível obter sua localização. Verifique a permissão do navegador.'),
+      { enableHighAccuracy: true, timeout: 5000 },
+    );
+  }
+
+  if (!supported) return null;
+
+  return (
+    <button
+      ref={buttonRef}
+      type="button"
+      onClick={goToUser}
+      title="Voltar para minha localização"
+      aria-label="Voltar para minha localização"
+      className="absolute right-4 top-16 z-[1000] flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-primary)] shadow-md"
+    >
+      <LocateFixed size={18} />
+    </button>
+  );
 }
 
 function CenterMap({ center }) {
@@ -202,12 +242,21 @@ function MapaDenuncia({ fullScreen = false, reports: suppliedReports, showCityPi
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('darkMode'));
-    setDarkMode(saved);
+    const readDarkMode = () => {
+      try {
+        setDarkMode(!!JSON.parse(localStorage.getItem('darkMode')));
+      } catch {
+        setDarkMode(false);
+      }
+    };
+    readDarkMode();
 
-    const listener = () => setDarkMode(JSON.parse(localStorage.getItem('darkMode')));
-    window.addEventListener('storage', listener);
-    return () => window.removeEventListener('storage', listener);
+    window.addEventListener('darkModeChange', readDarkMode);
+    window.addEventListener('storage', readDarkMode);
+    return () => {
+      window.removeEventListener('darkModeChange', readDarkMode);
+      window.removeEventListener('storage', readDarkMode);
+    };
   }, []);
 
   useEffect(() => {
@@ -257,9 +306,9 @@ function MapaDenuncia({ fullScreen = false, reports: suppliedReports, showCityPi
   }
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[var(--color-surface-muted)]">
+    <div className={`relative h-full w-full overflow-hidden bg-[var(--color-surface-muted)] ${darkMode ? '[&_.leaflet-tile-pane]:[filter:invert(1)_hue-rotate(180deg)_brightness(0.9)_contrast(0.9)]' : ''}`}>
       <MapContainer center={[-31.769, -52.341]} zoom={15} className="urban-map h-full w-full" scrollWheelZoom zoomControl>
-        <TileLayer url={darkMode ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'} />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {interactive && <UserLocation />}
 
         {reports.map((report, index) => {
