@@ -28,12 +28,8 @@ function getReportCityId(report) {
   return String(report.city_id ?? report.cityId ?? report.city?.id ?? report.city ?? '');
 }
 
-function getReportCityName(report) {
-  if (report.city_name) return report.city_name;
-  if (report.cityName) return report.cityName;
-  if (typeof report.city === 'string') return report.city;
-  if (typeof report.city === 'object') return report.city.name || '';
-  return '';
+function getCityStateId(city) {
+  return String(city.state_id ?? city.stateId ?? city.state?.id ?? '');
 }
 
 function getNeighborhood(report) {
@@ -90,40 +86,94 @@ function Report() {
   const [reports, setReports] = useState([]);
   const [statusFilter, setStatusFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
   const [cityFilter, setCityFilter] = useState('');
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/reportList`, {
-      credentials: 'include',
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const source = Array.isArray(data) ? data : data.data;
-        setReports(Array.isArray(source) ? source.map((report) => ({ ...report, likedByCurrentUser: !!report.likedByCurrentUser })) : []);
-      })
-      .catch((error) => console.error('Erro ao buscar os relatos:', error));
+  const loadReports = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/reportList`,
+        {
+          credentials: 'include',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      console.log('📋 /reportList:', data);
+
+      const source = Array.isArray(data) ? data : data.data;
+
+      console.log('📋 PRIMEIRO REPORT:', source?.[0]);
+
+      setReports(
+        Array.isArray(source)
+          ? source.map((report) => ({
+              ...report,
+              likedByCurrentUser: !!report.likedByCurrentUser,
+            }))
+          : []
+      );
+    } catch (error) {
+      console.error('Erro ao buscar os relatos:', error);
+    }
+  };
+
+  if (token) {
+    loadReports();
+  }
+}, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const loadList = async (path, setter) => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
+          credentials: 'include',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setter(Array.isArray(data) ? data : data.data || []);
+      } catch (error) {
+        console.error(`Erro ao buscar ${path}:`, error);
+      }
+    };
+
+    loadList('/states', setStates);
+    loadList('/allCities', setCities);
   }, [token]);
 
-  const cityOptions = useMemo(() => {
-    const cities = new Map();
-    reports.forEach((report) => {
-      const id = getReportCityId(report);
-      const name = getReportCityName(report);
-      if (id && name) cities.set(id, name);
-    });
-    return [...cities.entries()];
-  }, [reports]);
+  const cityOptions = useMemo(
+    () => cities.filter((city) => !stateFilter || getCityStateId(city) === stateFilter),
+    [cities, stateFilter]
+  );
+
+  const cityStateById = useMemo(
+    () => new Map(cities.map((city) => [String(city.id), getCityStateId(city)])),
+    [cities]
+  );
 
   useEffect(() => {
-    if (cityFilter || !reports.length) return;
+    if (!cities.length) return;
 
     const userCityId = getCityId(user);
     const userCityName = getCityName(user).toLowerCase();
-    const matchingCity = cityOptions.find(([id, name]) => id === userCityId || name.toLowerCase() === userCityName);
+    const matchingCity = cities.find((city) => String(city.id) === userCityId || city.name?.toLowerCase() === userCityName);
 
-    if (matchingCity) setCityFilter(matchingCity[0]);
-  }, [cityFilter, cityOptions, reports.length, user]);
+    if (matchingCity) {
+      setStateFilter(getCityStateId(matchingCity));
+      setCityFilter(String(matchingCity.id));
+    }
+  }, [cities, user]);
 
   const filters = [
     { label: 'Todas', value: 'all' },
@@ -134,6 +184,7 @@ function Report() {
   const filteredReports = reports.filter((report) => {
     const searchableText = `${report.reportTitle || ''} ${report.address || ''} ${report.category || ''} ${getNeighborhood(report)}`.toLowerCase();
     if (search && !searchableText.includes(search.toLowerCase())) return false;
+    if (stateFilter && cityStateById.get(getReportCityId(report)) !== stateFilter) return false;
     if (cityFilter && getReportCityId(report) !== String(cityFilter)) return false;
     if (!PUBLIC_STATUSES.includes(report.status)) return false;
     return statusFilter === 'all' || report.status === statusFilter;
@@ -159,9 +210,13 @@ function Report() {
               <Search size={15} />
               <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar relato ou bairro" className="w-full bg-transparent text-xs text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)]" />
             </label>
+            <select value={stateFilter} onChange={(event) => { setStateFilter(event.target.value); setCityFilter(''); }} className="h-9 max-w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-2.5 text-xs font-semibold text-[var(--color-ink)] outline-none focus:border-[var(--color-primary)]">
+              <option value="">Todos os estados</option>
+              {states.map((state) => <option key={state.id} value={String(state.id)}>{state.name}</option>)}
+            </select>
             <select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)} className="h-9 max-w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-2.5 text-xs font-semibold text-[var(--color-ink)] outline-none focus:border-[var(--color-primary)]">
               <option value="">Todas as cidades</option>
-              {cityOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+              {cityOptions.map((city) => <option key={city.id} value={String(city.id)}>{city.name}</option>)}
             </select>
           </div>
           <div className="flex flex-wrap gap-1.5">
