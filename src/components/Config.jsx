@@ -11,8 +11,7 @@ const TABS = [
   { id: 'notifications', label: 'Notificações', icon: Bell },
   { id: 'appearance', label: 'Aparência', icon: Palette },
   { id: 'history', label: 'Histórico', icon: Clock },
-  { id: 'help', label: 'Ajuda e suporte', icon: HelpCircle },
-  { id: 'about', label: 'Sobre', icon: Info },
+  { id: 'help', label: 'Ajuda e suporte', icon: HelpCircle }
 ];
 
 const FIELD = 'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/15';
@@ -91,8 +90,6 @@ export default function SettingsInterface() {
     if (activeTab === 'notifications') return <NotificationsTab notifications={settings.notifications} toggleNotification={settings.toggleNotification} />;
     if (activeTab === 'appearance') return <AppearanceTab darkMode={settings.darkMode} setDarkMode={settings.setDarkMode} />;
     if (activeTab === 'history') return <div className="urban-surface overflow-hidden"><History /></div>;
-    if (activeTab === 'about') return <About />;
-    return <Section title="Ajuda e suporte" description="Encontre respostas e entre em contato com a comunidade."><Link to="/help" className="inline-flex items-center rounded-xl bg-[var(--color-primary)] px-4 py-3 text-sm font-bold text-white">Abrir central de ajuda</Link></Section>;
   }
 
   return (
