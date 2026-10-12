@@ -53,14 +53,14 @@ function History() {
               </p>
           </div>
         ) : (
-          <div>
-            <h1 className='text-3xl font-bold dark:text-gray-200'>Suas denúncias:</h1>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="w-full min-w-0">
+            <h1 className='text-3xl font-bold p-5 dark:text-gray-200'>Suas denúncias:</h1>
+            <div className="grid w-full min-w-0 grid-cols-1 gap-5 gap-x-10 px-5 pb-5 text-sm lg:grid-cols-2">
               {userReports.map((report) => (
                 <ReportCard
                   key={report.id}
                   id={report.id}
-                  image={report.image ? `${import.meta.env.VITE_API_URL}/uploads/${report.image}` : '/placeholder.png'} 
+                  image={report.image ? `${import.meta.env.VITE_API_URL}/uploads/${report.image}` : 'src/assets/errorImg.png'} 
                   status={report.status}
                   statusColor="green"
                   category={report.category}
