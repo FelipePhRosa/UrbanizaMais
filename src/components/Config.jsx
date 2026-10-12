@@ -77,8 +77,38 @@ function NotificationsTab({ notifications, toggleNotification }) {
   return <Section title="Preferências de notificação" description="Escolha como deseja receber atualizações da plataforma."><div className="divide-y divide-[var(--color-border-subtle)]">{Object.entries(notifications).map(([key, enabled]) => <div key={key} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"><div><h3 className="text-sm font-bold text-[var(--color-ink)]">Notificações por {labels[key] || key}</h3><p className="mt-1 text-xs text-[var(--color-muted)]">Receber avisos por {labels[key]?.toLowerCase() || key}.</p></div><button type="button" onClick={() => toggleNotification(key)} aria-pressed={enabled} className={`relative h-6 w-11 shrink-0 rounded-full transition ${enabled ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]'}`}><span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition ${enabled ? 'left-6' : 'left-1'}`} /></button></div>)}</div></Section>;
 }
 
-function AppearanceTab({ darkMode, setDarkMode }) {
-  return <Section title="Aparência" description="Ajuste o tema para o seu ambiente de uso."><div className="space-y-5"><div><p className="mb-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-muted)]">Tema</p><div className="grid gap-2 sm:grid-cols-2"><button type="button" onClick={() => setDarkMode(false)} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${!darkMode ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-muted)]'}`}><Sun size={17} /> Claro</button><button type="button" onClick={() => setDarkMode(true)} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${darkMode ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-muted)]'}`}><Moon size={17} /> Escuro</button></div></div><Field label="Tamanho da fonte"><select className={FIELD} defaultValue="medium"><option value="small">Pequeno</option><option value="medium">Médio</option><option value="large">Grande</option></select></Field></div></Section>;
+function AppearanceTab({ darkMode, setDarkMode, fontSize, setFontSize }) {
+  const fontSizes = [
+    { value: 'small', label: 'Pequeno', textClass: 'text-xs' },
+    { value: 'medium', label: 'Médio', textClass: 'text-sm' },
+    { value: 'large', label: 'Grande', textClass: 'text-base' },
+  ];
+
+  return (
+    <Section title="Aparência" description="Ajuste o tema para o seu ambiente de uso.">
+      <div className="space-y-5">
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-muted)]">Tema</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <button type="button" onClick={() => setDarkMode(false)} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${!darkMode ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-muted)]'}`}><Sun size={17} /> Claro</button>
+            <button type="button" onClick={() => setDarkMode(true)} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${darkMode ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-muted)]'}`}><Moon size={17} /> Escuro</button>
+          </div>
+        </div>
+        <Field label="Tamanho da fonte">
+          <div role="radiogroup" aria-label="Tamanho da fonte" className="grid grid-cols-3 gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-1">
+            {fontSizes.map((option) => (
+              <label key={option.value} className="cursor-pointer">
+                <input type="radio" name="font-size" value={option.value} checked={fontSize === option.value} onChange={() => setFontSize(option.value)} className="peer sr-only" />
+                <span className={`flex min-h-10 items-center justify-center rounded-lg px-2 font-semibold transition peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--color-primary)] ${option.textClass} ${fontSize === option.value ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-muted)] hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)]'}`}>
+                  {option.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </Field>
+      </div>
+    </Section>
+  );
 }
 
 export default function SettingsInterface() {
@@ -88,13 +118,13 @@ export default function SettingsInterface() {
   function renderTab() {
     if (activeTab === 'account') return <AccountTab {...settings} />;
     if (activeTab === 'notifications') return <NotificationsTab notifications={settings.notifications} toggleNotification={settings.toggleNotification} />;
-    if (activeTab === 'appearance') return <AppearanceTab darkMode={settings.darkMode} setDarkMode={settings.setDarkMode} />;
+    if (activeTab === 'appearance') return <AppearanceTab darkMode={settings.darkMode} setDarkMode={settings.setDarkMode} fontSize={settings.fontSize} setFontSize={settings.setFontSize} />;
     if (activeTab === 'history') return <div className="urban-surface overflow-hidden"><History /></div>;
   }
 
   return (
     <Layout>
-      <main className="urban-settings min-h-[calc(100dvh-72px)] bg-[var(--color-surface-muted)] px-3 py-4 sm:px-5 md:px-8 md:py-6">
+      <main className="urban-settings min-h-[calc(100dvh-72px)] bg-[var(--color-surface-muted)] px-3 py-4 sm:px-5 md:px-8 md:py-6 pb-20">
         <div className="mx-auto max-w-[1120px]">
           <header className="mb-5"><p className="urban-eyebrow">Preferências</p><h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--color-ink)]">Configurações</h1><p className="mt-1 text-sm text-[var(--color-muted)]">Conta, notificações e aparência do Urbaniza+.</p></header>
           <nav className="mb-5 flex gap-1 overflow-x-auto border-b border-[var(--color-border)] pb-px" aria-label="Seções de configurações">{TABS.map(({ id, label, icon: Icon }) => <button type="button" key={id} onClick={() => setActiveTab(id)} className={`inline-flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-xs font-bold transition ${activeTab === id ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]'}`}><Icon size={15} />{label}</button>)}</nav>
