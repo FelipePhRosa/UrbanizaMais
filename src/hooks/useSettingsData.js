@@ -2,12 +2,18 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
+const FONT_SIZE_PIXELS = { small: '14px', medium: '16px', large: '18px' };
+
 export default function useSettingsData() {
   const { user, setUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : document.documentElement.classList.contains('dark');
+  });
+  const [fontSize, setFontSize] = useState(() => {
+    const saved = localStorage.getItem('fontSize');
+    return Object.hasOwn(FONT_SIZE_PIXELS, saved) ? saved : 'medium';
   });
   const [edit, setEdit] = useState(false);
   const [nome, setNome] = useState(user?.fullName || '');
@@ -23,6 +29,11 @@ export default function useSettingsData() {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = FONT_SIZE_PIXELS[fontSize];
+    localStorage.setItem('fontSize', fontSize);
+  }, [fontSize]);
 
   useEffect(() => {
     setNome(user?.fullName || '');
@@ -65,5 +76,5 @@ export default function useSettingsData() {
   const handleLogout = () => { logout(); navigate('/login'); };
   const toggleNotification = (key) => setNotifications((previous) => ({ ...previous, [key]: !previous[key] }));
 
-  return { user, darkMode, setDarkMode, edit, setEdit, nome, setNome, username, setUsername, email, setEmail, telefone, setTelefone, avatarUrl, preview, notifications, handleFileChange, handleSave, handleLogout, toggleNotification };
+  return { user, darkMode, setDarkMode, fontSize, setFontSize, edit, setEdit, nome, setNome, username, setUsername, email, setEmail, telefone, setTelefone, avatarUrl, preview, notifications, handleFileChange, handleSave, handleLogout, toggleNotification };
 }
