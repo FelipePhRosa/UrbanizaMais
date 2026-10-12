@@ -124,7 +124,7 @@ function UserLocation() {
     <button
       ref={buttonRef}
       type="button"
-      onClick={goToUser}
+      onClickCapture={goToUser}
       title="Voltar para minha localização"
       aria-label="Voltar para minha localização"
       className="absolute right-4 top-16 z-[1000] flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-primary)] shadow-md"
@@ -157,7 +157,7 @@ function ReportCarousel({ reports, activeReport, onChange, onPauseChange }) {
 
   return (
     <div
-      className="absolute bottom-4 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 sm:bottom-6"
+      className="absolute bottom-2 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-[500px] -translate-x-1/2 md:bottom-2"
       onMouseEnter={() => onPauseChange(true)}
       onMouseLeave={() => onPauseChange(false)}
       onTouchStart={() => onPauseChange(true)}
@@ -306,7 +306,7 @@ function MapaDenuncia({ fullScreen = false, reports: suppliedReports, showCityPi
   }
 
   return (
-    <div className={`relative h-full w-full overflow-hidden bg-[var(--color-surface-muted)] ${darkMode ? '[&_.leaflet-tile-pane]:[filter:invert(1)_hue-rotate(180deg)_brightness(0.9)_contrast(0.9)]' : ''}`}>
+    <div className={`relative h-full w-full overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface-muted)] ${darkMode ? '[&_.leaflet-tile-pane]:[filter:invert(1)_hue-rotate(180deg)_brightness(0.9)_contrast(0.9)]' : ''}`}>
       <MapContainer center={[-31.769, -52.341]} zoom={15} className="urban-map h-full w-full" scrollWheelZoom zoomControl>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {interactive && <UserLocation />}
