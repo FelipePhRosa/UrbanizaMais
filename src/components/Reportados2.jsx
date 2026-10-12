@@ -44,9 +44,9 @@ function ReportRow({ report }) {
   return (
     <article className="grid gap-3 border-b border-[var(--color-border-subtle)] p-3 last:border-0 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:px-4">
       <img
-        src={report.image ? `${import.meta.env.VITE_API_URL}/uploads/${report.image}` : '/placeholder.png'}
+        src={report.image ? `${import.meta.env.VITE_API_URL}/uploads/${report.image}` : 'src/assets/errorImg.png'}
         alt=""
-        className="h-20 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] object-cover sm:h-16 sm:w-[88px]"
+        className="h-50 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] object-cover sm:h-16 sm:w-[88px]"
       />
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
@@ -70,7 +70,7 @@ function ReportRow({ report }) {
         </div>
       </div>
       <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:justify-center">
-        <span className="rounded-full bg-[var(--color-success-tint)] px-2.5 py-1 text-[10px] font-bold text-[var(--color-success)]">
+        <span className="rounded-full dark:bg-[var(--color-success-tint)] bg-green-200/80 px-2.5 py-1 text-[10px] font-bold text-[var(--color-success)]">
           {report.status === 'resolvida' ? 'Resolvido' : 'Aprovado'}
         </span>
         <Link to={`/report/${report.id}`} className="text-xs font-bold text-[var(--color-primary)] hover:underline">
@@ -187,7 +187,7 @@ function Report() {
 
   return (
     <Layout>
-      <main className="mx-auto max-w-[1500px] px-4 py-5 md:px-8"><AdminBackLink />
+      <main className="mx-auto max-w-[1500px] pb-20 px-4 py-5 md:px-8"><AdminBackLink />
         <header className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
             <p className="urban-eyebrow">Participação cidadã</p>
