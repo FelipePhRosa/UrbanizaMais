@@ -32,8 +32,8 @@ function Layout({ children, hideMobileNavigation = false }) {
       <Navigation isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} hideMobileNavigation={hideMobileNavigation} />
 
       {/* Conteúdo principal */}
-      <div className={`flex-1 min-w-0 transition-[margin] duration-300 ease-linear ${isSidebarOpen ? 'md:ml-60' : 'md:ml-16'} ${hideMobileNavigation ? '' : 'pb-20 md:pb-0'}`}>
-        <header className="urban-topbar sticky top-0 z-40 flex h-[64px] items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)]/95 px-4 backdrop-blur md:h-[72px] md:px-8">
+      <div className={`flex-1 min-w-0 transition-[margin] duration-300 ease-linear ${isSidebarOpen ? 'md:ml-60' : 'md:ml-16'} ${hideMobileNavigation ? '' : 'md:mb-0'}`}>
+        <header className="urban-topbar sticky top-0 z-1500 flex h-[64px] items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)]/95 px-4 backdrop-blur md:h-[72px] md:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <div className="md:hidden"><Brand compact /></div>
             <div className="hidden min-w-0 md:block">
