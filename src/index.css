@@ -19,11 +19,11 @@
   --color-primary-deep: #17102f;
   --color-primary-tint: #f0ebff;
   --color-ink: #142f52;
+  --color-lgn: #cad5e2  ;
   --color-muted: #71839a;
-  --color-border: #dfe7f0;
-  --color-border-subtle: #eef2f6;
+  --color-border: #ccd0d6;
+  --color-border-subtle: #b9bdc1;
   --color-surface-muted: #f7f9fc;
-  --color-surface: #ffffff;
   --color-soft: #f8fafc;
   --color-success: #14956b;
   --color-warning: #d68b18;
@@ -31,6 +31,7 @@
   --color-warning-tint: #fff7e8;
   --color-danger: #c44747;
   --color-danger-tint: #fff1f1;
+  --color-gray: #7f7f82;
 }
 
 .dark {
@@ -46,6 +47,7 @@
   --color-surface-muted: #0f1929;
   --color-surface: #162338;
   --color-soft: #1d2d46;
+  --color-gray: #505051;
   --color-success-tint: #173a35;
   --color-warning-tint: #41351e;
   --color-danger-tint: #42272c;
@@ -54,13 +56,9 @@
 * { box-sizing: border-box; }
 html { background: var(--urban-bg); }
 body { margin: 0; min-width: 320px; background: var(--urban-bg); color: var(--color-ink); }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 3px solid rgba(108, 43, 217, .28);
-  outline-offset: 2px;
-}
 
 .urban-shell { background: var(--urban-bg); color: var(--urban-navy); }
-.urban-surface { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px; }
+.urban-surface { background: var(--color-surface); border: 1px solid var(--color-gray); border-radius: 16px; }
 .urban-eyebrow { color: var(--color-muted); font-size: .68rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
 .urban-button-primary { background: var(--urban-navy); color: white; transition: background .2s, transform .2s; }
 .urban-button-primary:hover { background: #214a7b; transform: translateY(-1px); }
