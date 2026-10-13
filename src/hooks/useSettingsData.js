@@ -1,14 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 export default function useSettingsData() {
   const { user, setUser, logout } = useContext(AuthContext);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : document.documentElement.classList.contains('dark');
-  });
   const [edit, setEdit] = useState(false);
   const [nome, setNome] = useState(user?.fullName || '');
   const [username, setUsername] = useState(user?.nameUser || '');
@@ -18,11 +16,6 @@ export default function useSettingsData() {
   const [avatarFile, setAvatarFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [notifications, setNotifications] = useState({ email: true, push: false, sms: true });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
 
   useEffect(() => {
     setNome(user?.fullName || '');
