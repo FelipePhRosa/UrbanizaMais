@@ -143,7 +143,7 @@ function HowItWorks() {
                 </div>
               )}
 
-              <span className="absolute left-3 top-3 rounded-lg bg-[var(--color-ink)]/75 px-2 py-1 text-xs font-bold text-white">
+              <span className="absolute left-3 top-3 rounded-lg bg-[var(--color-ink)]/75 px-2 py-1 text-xs font-bold text-white dark:bg-[var(--color-primary)] dark:shadow-xl">
                 {number}
               </span>
             </div>
@@ -172,7 +172,7 @@ function FaqItem({ faq, open, onToggle, onNavigate }) {
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-[var(--color-primary-tint)]"
+        className="flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-[var(--color-primary-tint)] hover:cursor-pointer"
       >
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[var(--color-primary-tint)] text-[var(--color-primary)]">
           <Icon size={17} />
@@ -189,7 +189,7 @@ function FaqItem({ faq, open, onToggle, onNavigate }) {
 
         <ChevronDown
           size={17}
-          className={`shrink-0 text-[var(--color-muted)] transition-transform ${
+          className={`shrink-0 text-[var(--color-muted] transition-transform ${
             open ? 'rotate-180' : ''
           }`}
         />
@@ -273,13 +273,13 @@ export default function Ajuda() {
               </h2>
             </div>
 
-            <div className="flex gap-1 overflow-x-auto pb-1">
+            <div className="flex gap-1 overflow-x-auto pb-1 ">
               {CATEGORIES.map((item) => (
                 <button
                   type="button"
                   key={item.id}
                   onClick={() => setCategory(item.id)}
-                  className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition ${
+                  className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold transition hover:cursor-pointer ${
                     category === item.id
                       ? 'bg-[var(--color-primary)] text-white'
                       : 'bg-[var(--color-surface-muted)] text-[var(--color-muted)] hover:bg-[var(--color-primary-tint)] hover:text-[var(--color-primary)]'
@@ -320,13 +320,13 @@ export default function Ajuda() {
 
         <section className="urban-surface mt-6 flex flex-col items-start justify-between gap-4 bg-[var(--color-ink)] p-5 text-white sm:flex-row sm:items-center sm:p-6">
           <div className="flex items-start gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/10">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-black dark:bg-[var(--color-primary)]">
               <MessageCircle size={17} />
             </span>
 
             <div>
-              <h2 className="text-sm font-bold">Ainda precisa de ajuda?</h2>
-              <p className="mt-1 text-xs leading-5 text-white/70">
+              <h2 className="text-black text-sm font-bold dark:text-white">Ainda precisa de ajuda?</h2>
+              <p className="text-black mt-1 text-xs leading-5 dark:text-white">
                 Converse com a comunidade no canal que já está disponível no Urbaniza+.
               </p>
             </div>
@@ -335,7 +335,7 @@ export default function Ajuda() {
           <button
             type="button"
             onClick={() => navigate('/chat')}
-            className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-white px-4 text-xs font-bold text-[var(--color-ink)] hover:bg-[var(--color-primary-tint)] dark:bg-[var(--color-primary)] transition-colors duration-300 cursor-pointer"
+            className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[var(--color-primary)] px-4 text-xs font-bold text-white  hover:bg-[var(--color-primary-tint)] dark:bg-[var(--color-primary)] transition-colors duration-300 cursor-pointer"
           >
             Abrir chat
             <ArrowRight size={14} />
