@@ -132,7 +132,7 @@ export default function ReportPage() {
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-4">
-            <section className="overflow-hidden rounded-xl border border-[#E2E8F0] bg-white shadow-[0_1px_2px_rgba(0,0,0,.04)]">
+            <section className="overflow-hidden rounded-xl bg-white shadow-[0_5px_2px_rgba(0,0,0,.04)] dark:bg-gray-900 dark:shadow-gray-700 dark:shadow-md">
               {report.image ? (
                 <img
                   src={`${import.meta.env.VITE_API_URL}/uploads/${report.image}`}
@@ -146,19 +146,19 @@ export default function ReportPage() {
               )}
 
               <div className="p-4 md:p-5">
-                <p className="whitespace-pre-line text-sm leading-6 text-[#334155]">
+                <p className="whitespace-pre-line text-md leading-6 text-[#334155] dark:text-white">
                   {report.description || 'Sem descrição disponível.'}
                 </p>
               </div>
             </section>
 
-            <section className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,.04)]">
+            <section className="rounded-xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,.04)] dark:bg-gray-900 dark:shadow-gray-700 dark:shadow-m">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-semibold text-[#111827]">
+                  <h2 className="text-md font-semibold text-[#111827] dark:text-white">
                     Interações
                   </h2>
-                  <p className="mt-0.5 text-xs text-[#64748B]">
+                  <p className="mt-0.5 text-sm text-[#64748B] dark:text-gray-500">
                     Participe do acompanhamento deste relato.
                   </p>
                 </div>
@@ -173,43 +173,43 @@ export default function ReportPage() {
           </div>
 
           <aside className="space-y-4">
-            <section className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,.04)]">
-              <h2 className="mb-4 text-sm font-semibold text-[#111827]">
+            <section className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,.04)] dark:bg-gray-900 dark:shadow-gray-700 dark:shadow-m dark:border-0">
+              <h2 className="mb-4 text-sm font-semibold text-[#111827] dark:text-white">
                 Informações
               </h2>
 
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-3">
-                  <CalendarDays size={16} className="text-[#64748B]" />
+                  <CalendarDays size={16} className="text-[#64748B] dark:text-white" />
                   <div>
-                    <span className="block text-[11px] text-[#64748B]">
+                    <span className="block text-[11px] text-[#64748B] dark:text-white">
                       Criado em
                     </span>
-                    <strong className="font-medium text-[#334155]">
+                    <strong className="font-medium text-[#334155] dark:text-white">
                       {date(report.created_at)}
                     </strong>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Clock3 size={16} className="text-[#64748B]" />
+                  <Clock3 size={16} className="text-[#64748B] dark:text-white" />
                   <div>
-                    <span className="block text-[11px] text-[#64748B]">
+                    <span className="block text-[11px] text-[#64748B] dark:text-white">
                       Atualizado em
                     </span>
-                    <strong className="font-medium text-[#334155]">
+                    <strong className="font-medium text-[#334155] dark:text-white">
                       {date(report.updated_at)}
                     </strong>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <UserRound size={16} className="text-[#64748B]" />
+                  <UserRound size={16} className="text-[#64748B] dark:text-white" />
                   <div>
-                    <span className="block text-[11px] text-[#64748B]">
+                    <span className="block text-[11px] text-[#64748B] dark:text-white">
                       Responsável
                     </span>
-                    <strong className="font-medium text-[#334155]">
+                    <strong className="font-medium text-[#334155] dark:text-white">
                       {report.approverName || 'Não informado'}
                     </strong>
                   </div>
@@ -218,20 +218,23 @@ export default function ReportPage() {
             </section>
 
             {report.latitude && report.longitude && (
-              <section className="overflow-hidden rounded-xl border border-[#E2E8F0] bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,.04)]">
-                <div className="px-2 pb-2 pt-1">
-                  <h2 className="text-sm font-semibold text-[#111827]">
+              <section className="overflow-hidden rounded-xl border border-[#E2E8F0] bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,.04)] dark:bg-gray-900 dark:shadow-gray-700 dark:shadow-m dark:border-0">
+                <div className="px-2 pb-2 pt-2">
+                  <h2 className="text-sm font-semibold text-[#111827] dark:text-white">
                     Localização
                   </h2>
                 </div>
 
-                <div className="h-56 overflow-hidden rounded-lg">
+                <div className="h-auto overflow-hidden rounded-lg dark:text-white">
                   <MiniMap
                     lat={report.latitude}
                     lng={report.longitude}
                     category_id={report.category_id}
-                    darkMode={false}
+                    darkMode={false} 
                   />
+                  <p className='px-2 pt-1'>
+                    {report.address || 'Localização não informada'}
+                  </p>
                 </div>
               </section>
             )}
