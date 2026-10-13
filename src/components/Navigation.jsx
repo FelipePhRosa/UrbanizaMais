@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   CircleHelp,
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Brand from './Brand';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 
 const navigationItems = [
@@ -51,10 +52,7 @@ export default function Navigation({ isSidebarOpen, toggleSidebar, hideMobileNav
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : document.documentElement.classList.contains('dark');
-  });
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
   const isPlatformAdmin = ['1', '2'].includes(String(user?.role));
   const isMunicipalAdmin = String(user?.role) === '7';
   const visibleItems = useMemo(() => navigationItems.filter((item) => (!item.admin || isPlatformAdmin) && (!item.municipal || isMunicipalAdmin)), [isPlatformAdmin, isMunicipalAdmin]);
@@ -62,11 +60,6 @@ export default function Navigation({ isSidebarOpen, toggleSidebar, hideMobileNav
   const moreItems = visibleItems.filter(
     (item) => item.id !== 'logout' && (!item.primary || item.id === 'settings')
   );
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
 
   const handleItem = (item) => {
     if (item.action === 'logout') {
