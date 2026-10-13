@@ -86,7 +86,7 @@ export default function Home() {
             </div>
             <Link to="/mapa" className="text-xs font-bold text-[var(--color-primary)] hover:underline">Abrir mapa</Link>
           </div>
-          <div className="h-[300px] overflow-hidden rounded-lg md:h-[420px]">
+          <div className="h-[300px] overflow-hidden rounded-lg md:h-[520px]">
             <MapaDenuncia />
           </div>
         </section>
