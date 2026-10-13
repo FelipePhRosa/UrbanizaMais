@@ -72,10 +72,28 @@ function groupMessages(messages, currentUserId) {
   return groups;
 }
 
+
 function UserAvatar({ user, current = false, name = 'Anônimo' }) {
-  const source = user?.foto || '/cityIcon.png';
-  return <img src={source} alt={current ? 'Seu avatar' : `Avatar de ${name}`} className="h-7 w-7 shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] object-cover" />;
+  const foto = user?.foto || user?.avatar_url;
+  const source = foto
+    ? foto.includes('http') || foto.startsWith('data:') || foto.startsWith('blob:')
+      ? foto
+      : `${import.meta.env.VITE_API_URL}/uploads/${foto.replace(/^\/+/, '')}`
+    : '/cityIcon.png';
+
+  return (
+    <img
+      src={source}
+      alt={current ? 'Seu avatar' : `Avatar de ${name}`}
+      onError={(event) => {
+        event.currentTarget.onerror = null;
+        event.currentTarget.src = '/cityIcon.png';
+      }}
+      className="h-7 w-7 shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] object-cover"
+    />
+  );
 }
+
 
 function ReactionSummary({ message, isCurrentUser, userId }) {
   const reactions = message.reactions || {};
