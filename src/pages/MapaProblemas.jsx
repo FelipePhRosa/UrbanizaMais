@@ -6,8 +6,8 @@ import 'leaflet/dist/leaflet.css';
 export default function MapaProblemas() {
   return (
     <Layout>
-      <main className="relative h-[calc(100dvh-64px)] w-full overflow-hidden bg-[var(--color-surface-muted)] md:h-[calc(100dvh-72px)]">
-        <div className="absolute left-3 top-3 z-[1201]"><AdminBackLink /></div>
+      <main className="relative h-full w-full overflow-hidden bg-[var(--color-surface-muted)] md:h-[calc(100dvh-72px)]">
+        <div className="absolute left-3 top-3 z-[1201]"></div>
         <MapaDenuncia fullScreen />
       </main>
     </Layout>
