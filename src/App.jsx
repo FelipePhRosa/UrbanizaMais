@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import Registro from "./components/Registro";
 import PendingReports from "./components/PendingReports"
 import { AuthProvider } from './context/AuthProvider';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from "./components/Layout";
 import UserList from "./components/Userslist";
 import Ajuda from "./pages/Ajuda";
@@ -35,8 +36,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Toaster position="top-left" />
-        <Routes>
+        <ThemeProvider>
+          <Toaster position="top-left" />
+          <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
@@ -68,7 +70,8 @@ function App() {
             <Route path="/preferences" element={<Preferencias />} />
             <Route path="/report/:id" element={<ReportPage />} />
           </Route>
-        </Routes>
+          </Routes>
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   );
