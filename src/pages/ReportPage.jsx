@@ -232,9 +232,6 @@ export default function ReportPage() {
                     category_id={report.category_id}
                     darkMode={false} 
                   />
-                  <p className='px-2 pt-1'>
-                    {report.address || 'Localização não informada'}
-                  </p>
                 </div>
               </section>
             )}
