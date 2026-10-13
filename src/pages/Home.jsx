@@ -55,9 +55,6 @@ export default function Home() {
           </h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">Acompanhe os relatos públicos da sua região.</p>
         </div>
-        <Link to="/reportar" className="hidden h-10 items-center gap-2 rounded-xl bg-[var(--color-primary)] px-4 text-sm font-bold text-white transition hover:brightness-95 sm:inline-flex">
-          <Plus size={16} /> Novo relato
-        </Link>
       </header>
 
       <section aria-label="Métricas da cidade" className="mb-4 grid grid-cols-3 divide-x divide-[var(--color-border)] overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
@@ -100,12 +97,8 @@ export default function Home() {
             <Link to="/Report" className="text-xs font-bold text-[var(--color-primary)] hover:underline">Ver todos</Link>
           </div>
           <ReportCard reports={reports.slice(0, 8)} />
-        </section>
+        </section>  
       </div>
     </main>
-
-    <Link to="/reportar" className="fixed bottom-20 right-4 z-40 grid h-11 w-11 place-items-center rounded-full bg-[var(--color-primary)] text-white shadow-lg sm:hidden" aria-label="Novo relato">
-      <Plus size={19} />
-    </Link>
   </Layout>;
 }
