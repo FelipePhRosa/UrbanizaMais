@@ -46,8 +46,8 @@ function History() {
     
       <div className="flex w-full max-w-screen">
         {userReports.length === 0 ? (
-          <div className='w-full flex justify-center items-center mt-50'>
-              <p className="text-center text-4xl dark:text-gray-200 font-semibold mt-4">
+          <div className='w-full min-h-50 h-full flex justify-center items-center'>
+              <p className="text-center text-4xl dark:text-gray-200 font-semibold">
                 Você ainda não fez nenhuma denúncia.
                 <hr className='text-blue-400 mt-2 w-63'/>
               </p>
