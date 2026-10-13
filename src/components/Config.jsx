@@ -409,11 +409,7 @@ export default function SettingsInterface() {
     }
 
     if (activeTab === 'history') {
-      return (
-        <div className="urban-surface overflow-hidden">
-          <History />
-        </div>
-      );
+      return <History />;
     }
   }
 
