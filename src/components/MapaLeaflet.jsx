@@ -148,7 +148,7 @@ function ReportCarousel({ reports, activeReport, onChange, onPauseChange }) {
 
   return (
     <div
-      className="absolute bottom-4 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 sm:bottom-6"
+      className="absolute bottom-16 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 sm:bottom-6"
       onMouseEnter={() => onPauseChange(true)}
       onMouseLeave={() => onPauseChange(false)}
       onTouchStart={() => onPauseChange(true)}
