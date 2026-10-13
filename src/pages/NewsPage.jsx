@@ -41,12 +41,6 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Esta página vive fora do Layout, então aplica o tema salvo por conta própria.
-  useEffect(() => {
-    const saved = localStorage.getItem('darkMode');
-    document.documentElement.classList.toggle('dark', saved ? JSON.parse(saved) : false);
-  }, []);
-
   useEffect(() => {
     if (!id || authLoading) return;
     let active = true;
