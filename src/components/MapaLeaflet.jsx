@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -6,16 +6,7 @@ import { ChevronRight, List, LocateFixed, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MiniModal from './MiniModal';
 import ReportModal from './ReportModal';
-
-// O evento 'storage' não dispara na mesma aba; avisamos nós mesmos quando 'darkMode' é gravado
-if (typeof window !== 'undefined' && !window.__darkModePatched) {
-  window.__darkModePatched = true;
-  const originalSetItem = Storage.prototype.setItem;
-  Storage.prototype.setItem = function setItem(key, value) {
-    originalSetItem.call(this, key, value);
-    if (key === 'darkMode') window.dispatchEvent(new Event('darkModeChange'));
-  };
-}
+import { ThemeContext } from '../context/ThemeContext';
 
 const CITIES = [
   { name: 'Pelotas', lat: -31.765, lng: -52.337 },
@@ -231,7 +222,7 @@ function CityPicker({ cities, selectedCity, isOpen, onToggle, onSelect }) {
 }
 
 function MapaDenuncia({ fullScreen = false, reports: suppliedReports, showCityPicker = true, interactive = true }) {
-  const [darkMode, setDarkMode] = useState(JSON.parse(localStorage.getItem('darkMode')) || false);
+  const { appliedDarkMode } = useContext(ThemeContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [coords, setCoords] = useState(null);
   const [reports, setReports] = useState([]);
@@ -240,24 +231,6 @@ function MapaDenuncia({ fullScreen = false, reports: suppliedReports, showCityPi
   const [selectedCity, setSelectedCity] = useState('Pelotas');
   const [activeReport, setActiveReport] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
-
-  useEffect(() => {
-    const readDarkMode = () => {
-      try {
-        setDarkMode(!!JSON.parse(localStorage.getItem('darkMode')));
-      } catch {
-        setDarkMode(false);
-      }
-    };
-    readDarkMode();
-
-    window.addEventListener('darkModeChange', readDarkMode);
-    window.addEventListener('storage', readDarkMode);
-    return () => {
-      window.removeEventListener('darkModeChange', readDarkMode);
-      window.removeEventListener('storage', readDarkMode);
-    };
-  }, []);
 
   useEffect(() => {
     if (!fullScreen || reports.length < 2 || isCarouselPaused) return undefined;

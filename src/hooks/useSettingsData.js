@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 const FONT_SIZE_PIXELS = { small: '14px', medium: '16px', large: '18px' };
 
 export default function useSettingsData() {
   const { user, setUser, logout } = useContext(AuthContext);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');

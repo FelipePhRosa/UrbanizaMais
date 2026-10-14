@@ -42,14 +42,6 @@ function Layout({ children, hideMobileNavigation = false }) {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
-            <label className="hidden h-10 max-w-[300px] flex-1 items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 text-[var(--color-muted)] sm:flex">
-              <Search size={17} aria-hidden="true" />
-              <input aria-label="Buscar" className="min-w-0 flex-1 bg-transparent text-sm text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)]" placeholder="Buscar na cidade" />
-            </label>
-            <Link to="/notifications" aria-label="Notificações" className="relative grid h-10 w-10 place-items-center rounded-xl text-[var(--color-muted)] transition hover:bg-[var(--color-primary-tint)] hover:text-[var(--color-primary)]">
-              <Bell size={18} />
-              <span className="absolute right-2.5 top-2 h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]" />
-            </Link>
             <Link to="/settings" aria-label="Abrir perfil" className="flex min-w-0 items-center gap-2 rounded-xl p-1 transition hover:bg-[var(--color-primary-tint)]">
               <img src={avatar} alt="" className="h-9 w-9 rounded-xl object-cover" />
               <span className="hidden max-w-28 truncate text-xs font-bold text-[var(--color-ink)] lg:block">{user?.nameUser || 'Visitante'}</span>

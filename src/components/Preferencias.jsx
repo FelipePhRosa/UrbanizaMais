@@ -1,20 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { Sun, Moon, Layout as LayoutIcon, Palette, Star, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Undo2 } from 'lucide-react';
 import Layout from './Layout';
+import { ThemeContext } from '../context/ThemeContext';
 
 export default function Preferencias() {
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : document.documentElement.classList.contains('dark');
-  });
-
-  useEffect(() => {
-    if (darkMode) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
 
   return (
     <Layout>

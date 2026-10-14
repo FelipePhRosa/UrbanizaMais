@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import Registro from "./components/Registro";
 import PendingReports from "./components/PendingReports"
 import { AuthProvider } from './context/AuthProvider';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from "./components/Layout";
 import UserList from "./components/Userslist";
 import Ajuda from "./pages/Ajuda";
@@ -35,8 +36,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Toaster position="top-left" />
-        <Routes>
+        <ThemeProvider>
+          <Toaster position="top-left" />
+          <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/login" element={<Login />} />
@@ -63,12 +65,13 @@ function App() {
             <Route path="/settings" element={<ConfigWrapper />} />
             <Route path="/EditarPerfil" element={<EditarPerfil />} />
             <Route path="/about" element={<Layout><AboutPage /></Layout>} />
-            <Route path="/myreports" element={<Layout><History /></Layout>} />
+            <Route path="/myreports" element={<Layout><main className="mx-auto w-full max-w-[1120px] px-3 py-4 sm:px-5 md:px-8 md:py-6"><History /></main></Layout>} />
             <Route path="/notifications" element={<Notificacoes />} />
             <Route path="/preferences" element={<Preferencias />} />
             <Route path="/report/:id" element={<ReportPage />} />
           </Route>
-        </Routes>
+          </Routes>
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   );
