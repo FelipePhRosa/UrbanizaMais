@@ -9,10 +9,6 @@ export default function useSettingsData() {
   const { user, setUser, logout } = useContext(AuthContext);
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : document.documentElement.classList.contains('dark');
-  });
   const [fontSize, setFontSize] = useState(() => {
     const saved = localStorage.getItem('fontSize');
     return Object.hasOwn(FONT_SIZE_PIXELS, saved) ? saved : 'medium';
@@ -26,11 +22,6 @@ export default function useSettingsData() {
   const [avatarFile, setAvatarFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [notifications, setNotifications] = useState({ email: true, push: false, sms: true });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
 
   useEffect(() => {
     document.documentElement.style.fontSize = FONT_SIZE_PIXELS[fontSize];
