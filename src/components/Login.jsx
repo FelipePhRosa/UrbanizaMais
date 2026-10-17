@@ -157,18 +157,6 @@ export default function Login() {
               <input name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} autoComplete="current-password" placeholder="Digite sua senha" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60" /></span>
             </label>
 
-              <div className="relative block">
-                <Mail size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
-                <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-slate-700 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black dark:text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
-              </div>
-
-            <label className="block">
-              <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">Senha</span>
-              <div className="relative block">
-                <LockKeyhole size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-slate-700 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
-              </div>
-            </label>
 
             <div className="-mt-2 flex justify-end">
               <Link to="/redefinirsenha" className="text-sm font-bold text-[var(--color-primary)] hover:underline">Esqueci minha senha</Link>
