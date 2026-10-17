@@ -43,7 +43,7 @@ function Toggle({ checked, onChange, label }) {
 
 function Card({ title, children }) {
   return (
-    <section className="overflow-hidden rounded-2xl bg-gray-600/15 border border-slate-400 shadow-sm dark:border-slate-800 dark:bg-slate-900 transition-colors duration-700">
+    <section className="overflow-hidden rounded-2xl bg-gray-600/15 border border-slate-400 shadow-sm dark:border-slate-800 dark:bg-slate-900 transition-colors duration-700 z-50">
       <h2 className="border-b border-slate-300 bg-slate-300/50 dark:bg-slate-800/40 px-5 py-3 text-xs font-bold uppercase tracking-widest text-slate-500 dark:border-slate-800 transition-colors duration-700">
         {title}
       </h2>
