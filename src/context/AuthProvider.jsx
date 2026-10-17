@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { AuthContext } from './AuthContext';
 import api from './api';
 
@@ -6,6 +8,25 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const tokenRef = useRef(token);
+
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      if (tokenRef.current) {
+        toast.error('Sessão expirada. Faça login novamente.');
+      }
+      logout();
+      navigate('/login', { replace: true });
+    };
+
+    window.addEventListener('urbaniza:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('urbaniza:session-expired', handleSessionExpired);
+  }, [navigate]);
 
   useEffect(() => {
     if (token) {
