@@ -162,8 +162,13 @@ export default function Login() {
               <Link to="/redefinirsenha" className="text-sm font-bold text-[var(--color-primary)] hover:underline">Esqueci minha senha</Link>
             </div>
             {error && <p role="alert" className="rounded-xl bg-[#fff1f1] px-3 py-2 text-sm font-medium text-[#c44747]">{error}</p>}
-            <button type="submit" disabled={loading} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60">{loading ? 'Entrando...' : <>Entrar <ArrowRight size={17} /></>}</button>
-            <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:ring-2 focus:ring-[var(--color-primary-tint)] focus:border-white">Entrar <ArrowRight size={17} /></button>
+            <button type="submit" disabled={loading} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60">
+              {
+                loading ? 'Entrando...' : <>Entrar 
+                <ArrowRight size={17} />
+                </>
+              }
+            </button>
           </form>
 
           <div className="mt-7 flex items-center justify-between gap-4 text-sm">
