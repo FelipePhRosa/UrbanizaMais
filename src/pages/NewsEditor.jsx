@@ -359,7 +359,7 @@ export default function NewsEditor() {
       </main>
 
       {isMobile && (
-        <div className="fixed inset-x-0 bottom-0 z-[1250] flex items-center gap-2 border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-[1250] flex items-center gap-2 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2.5 md:hidden">
           <button type="button" onClick={() => handleOpenMenu(blocks[blocks.length - 1]?.id, '', null, 'insert')} className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-[var(--color-border)] text-xs font-bold text-[var(--color-ink)]">
             <Plus size={15} /> Bloco
           </button>

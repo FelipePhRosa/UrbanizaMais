@@ -8,8 +8,6 @@ export default function AuthShell({ eyebrow = 'Urbaniza+', title, description, b
       <section className="relative hidden overflow-hidden bg-[var(--color-ink)] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
         {sideImage && <img src={sideImage} alt="" className="absolute inset-0 h-full w-full object-cover" />}
         {sideImage && <div className="absolute inset-0 bg-black/35" />}
-        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[var(--color-primary)]/35 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-[#8b5cf6]/20 blur-3xl" />
         <div className="relative"><Brand light /></div>
         <div className="relative max-w-md">
           <p className="mb-5 text-xs font-bold uppercase tracking-[.18em] text-[#cfc0ff]">Tecnologia a serviço da cidade</p>

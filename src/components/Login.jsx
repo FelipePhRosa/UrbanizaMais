@@ -1,16 +1,32 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, LightbulbIcon, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
 import loginimg from '../assets/login.jpg';
+import loginDark from '../assets/loginDark.png'
 import Brand from './Brand';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('darkMode');
+      return saved ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const toggleTheme = () => setDarkMode((previous) => !previous);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -29,10 +45,8 @@ export default function Login() {
   return (
     <main className="grid min-h-screen bg-[var(--color-surface-muted)] lg:grid-cols-[minmax(360px,.9fr)_minmax(520px,1.1fr)]">
       <section className="relative hidden overflow-hidden bg-[var(--color-ink)] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
-        <img src={loginimg} alt="Login" className="absolute inset-0 hidden h-full w-full object-cover lg:block " />
+        <img src={darkMode ? loginDark : loginimg }  alt="Login" className="absolute inset-0 hidden h-full w-full object-cover lg:block"/>
         <div className="absolute inset-0 bg-black/35" />
-        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[var(--color-primary)]/35 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-[#8b5cf6]/20 blur-3xl" />
         <div className="relative"><Brand light /></div>
         <div className="relative max-w-md">
           <p className="mb-5 text-xs font-bold uppercase tracking-[.18em] text-[#cfc0ff]">Tecnologia a serviço da cidade</p>
@@ -42,43 +56,54 @@ export default function Login() {
         <p className="relative text-sm text-white/45">Urbaniza+ · Cidade melhor, juntos.</p>
       </section>
 
-      <section className="flex items-center justify-center px-5 py-10 sm:px-10 lg:bg-white">
+      <section className="flex items-center justify-center overflow-hidden px-5 py-10 sm:px-10 bg-white dark:bg-gray-900">
         <div className="w-full max-w-[440px]">
           <div className="mb-10 lg:hidden"><Brand /></div>
           <div className="mb-8">
             <p className="urban-eyebrow mb-3">Acesso seguro</p>
-            <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-ink)]">Entre na sua conta</h2>
+            <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-ink)] dark:text-gray-300">Entre na sua conta</h2>
             <p className="mt-2 text-sm text-[var(--color-muted)]">Bem-vindo de volta ao Urbaniza+.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <label className="block">
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">E-mail ou nome de usuário</span>
-            <span className="relative block">
-              <Mail size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
-              <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)]" />
-              </span>
-              </label>
+              <div className="relative block">
+                <Mail size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
+                <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-slate-700 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black dark:text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
+              </div>
+            </label>
+
             <label className="block">
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">Senha</span>
-              <span className="relative block">
-                <LockKeyhole size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)]" /></span></label>
+              <div className="relative block">
+                <LockKeyhole size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-slate-700 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
+              </div>
+            </label>
             <div className="-mt-2 flex justify-end">
               <Link to="/redefinirsenha" className="text-sm font-bold text-[var(--color-primary)] hover:underline">Esqueci minha senha</Link>
-              </div>
+            </div>
             {error && <p role="alert" className="rounded-xl bg-[#fff1f1] px-3 py-2 text-sm font-medium text-[#c44747]">{error}</p>}
-            <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-tint)]">Entrar <ArrowRight size={17} /></button>
+            <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:ring-2 focus:ring-[var(--color-primary-tint)] focus:border-white">Entrar <ArrowRight size={17} /></button>
           </form>
 
           <div className="mt-7 flex items-center justify-between gap-4 text-sm">
-            <span className="text-[var(--color-muted)]">Ainda não tem conta?</span>
+            <span className="dark:text-[var(--color-muted)] text-gray-800 font-[420]">Ainda não tem conta?</span>
             <Link to="/registro" className="font-bold text-[var(--color-primary)] hover:underline">Criar conta</Link>
           </div>
-          <div className="mt-10 flex items-center gap-2 text-xs text-[var(--color-muted)]">
-            <ShieldCheck size={16} className="text-[#14956b]" /> Seus dados são protegidos.
+          <div className="mt-10 flex items-center justify-between text-xs text-[var(--color-muted)]">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={16} className="text-[#14956b]" />
+              <span className='text-gray-800 dark:text-white font-[520]'>Seus dados são protegidos.</span>
+            </div>
+            <button type="button" aria-label="Alternar tema" onClick={toggleTheme} className={`mx-2 grid h-10 w-10 place-items-center rounded-2xl border transition ${darkMode ? 'border-slate-300 bg-slate-200 text-slate-700' : 'border-amber-400 bg-amber-100 text-amber-600'}`}>
+              <LightbulbIcon size={22} />
+            </button>
           </div>
+
         </div>
+
       </section>
     </main>
   );

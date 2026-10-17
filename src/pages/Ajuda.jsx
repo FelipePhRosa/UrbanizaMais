@@ -135,26 +135,8 @@ function HowItWorks() {
         {STEPS.map(({ number, title, text, image, icon: Icon }) => (
           <article key={number} className="urban-surface overflow-hidden">
             <div className="relative h-36 overflow-hidden bg-[var(--color-primary-tint)]">
-              {image ? (
-                <img src={image} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <div className="grid h-full place-items-center text-[var(--color-primary)]">
-                  <Icon size={42} strokeWidth={1.4} />
-                </div>
-              )}
-
-              <span className="absolute left-3 top-3 rounded-lg bg-[var(--color-ink)]/75 px-2 py-1 text-xs font-bold text-white dark:bg-[var(--color-primary)] dark:shadow-xl">
-                {number}
-              </span>
-            </div>
-
-            <div className="p-4">
-              <h3 className="text-base font-bold text-[var(--color-ink)]">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-                {text}
-              </p>
+              {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center text-[var(--color-primary)]"><Icon size={42} strokeWidth={1.4} /></div>}
+              <span className="absolute left-3 top-3 rounded-lg bg-[var(--color-ink)] dark:bg-[#142f52] px-2 py-1 text-xs font-bold text-white">{number}</span>
             </div>
           </article>
         ))}
@@ -238,26 +220,8 @@ export default function Ajuda() {
 
   return (
     <Layout>
-      <main className="mx-auto max-w-[1180px] px-3 py-5 sm:px-5 md:px-8 md:py-7">
-        <header className="mb-7">
-          <p className="urban-eyebrow">Central de ajuda</p>
-          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--color-ink)] sm:text-3xl">
-            Como podemos ajudar?
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
-            Respostas rápidas para registrar problemas, acompanhar soluções e participar da cidade.
-          </p>
-
-          <label className="urban-surface mt-4 flex h-11 max-w-xl items-center gap-2 px-3 text-[var(--color-muted)]">
-            <Search size={17} />
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Pesquisar uma dúvida"
-              className="min-w-0 flex-1 bg-transparent text-sm text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)]"
-            />
-          </label>
-        </header>
+      <main className="mx-auto max-w-[1180px] px-3 py-5 sm:px-5 md:px-8 md:py-7 pb-20">
+        <header className="mb-7"><p className="urban-eyebrow">Central de ajuda</p><h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--color-ink)] sm:text-3xl">Como podemos ajudar?</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">Respostas rápidas para registrar problemas, acompanhar soluções e participar da cidade.</p><label className="urban-surface mt-4 flex h-11 max-w-xl items-center gap-2 px-3 text-[var(--color-muted)]"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Pesquisar uma dúvida" className="min-w-0 flex-1 focus:outline-none focus:ring-0 focus:shadow-none text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)]" /></label></header>
 
         <HowItWorks />
 

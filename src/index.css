@@ -9,21 +9,24 @@
   color: #142f52;
   background: #f7f9fc;
   font-synthesis: none;
+  --mobile-nav-height: calc(62px + max(0px, env(safe-area-inset-bottom) - 8px));
   --urban-navy: #142f52;
   --urban-purple: #6c2bd9;
   --urban-violet: #8b5cf6;
-  --urban-bg: #f7f9fc;
+  --urban-bg: #ffffff;
   --urban-border: #dfe7f0;
   --urban-muted: #71839a;
   --color-primary: #6c2bd9;
   --color-primary-deep: #17102f;
   --color-primary-tint: #f0ebff;
   --color-ink: #142f52;
+  --color-lgn: #cad5e2  ;
   --color-muted: #71839a;
-  --color-border: #dfe7f0;
-  --color-border-subtle: #eef2f6;
-  --color-surface-muted: #f7f9fc;
-  --color-surface: #ffffff;
+  --color-border: #ccd0d6;
+  --color-border-subtle: #b9bcbf;
+  --color-nav-surface: #f7f9fc;
+  --color-surface-muted: #ffffff;
+  --color-surface: #ffffff76;
   --color-soft: #f8fafc;
   --color-success: #14956b;
   --color-warning: #d68b18;
@@ -43,8 +46,9 @@
   --color-muted: #9aa9bd;
   --color-border: #2a3a52;
   --color-border-subtle: #223149;
+  --color-nav-surface: #162338;
   --color-surface-muted: #0f1929;
-  --color-surface: #162338;
+  --color-surface: #162338c4;
   --color-soft: #1d2d46;
   --color-success-tint: #173a35;
   --color-warning-tint: #41351e;
@@ -54,19 +58,150 @@
 * { box-sizing: border-box; }
 html { background: var(--urban-bg); }
 body { margin: 0; min-width: 320px; background: var(--urban-bg); color: var(--color-ink); }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 3px solid rgba(108, 43, 217, .28);
-  outline-offset: 2px;
+
+.city-banner { container-type: inline-size; }
+.city-banner__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 34%);
+  align-items: stretch;
+  gap: 16px;
+  min-height: 116px;
+}
+.city-banner__identity {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) clamp(82px, 17cqw, 158px);
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  border-radius: 12px;
+  padding: 0 0 0 20px;
+}
+.city-banner__identity::before {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 0;
+  width: clamp(112px, 27%, 176px);
+  background: white;
+  clip-path: polygon(24% 0, 100% 0, 76% 100%, 0 100%);
+  content: '';
+  pointer-events: none;
+}
+.city-banner__crest-zone {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  min-height: 0;
+  align-self: stretch;
+  place-items: center;
+}
+.city-banner__thumbnail {
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 10px;
+  background: white;
+  padding: 4px;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 16%);
+}
+.city-banner__title { z-index: 1; min-width: 0; }
+.city-banner__eyebrow {
+  margin: 0;
+  color: rgb(255 255 255 / 86%);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.city-banner__title h2 {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  margin: 1px 0 0;
+  color: white;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.city-banner__title h2 > span { overflow-wrap: anywhere; }
+.city-banner__verified { width: 20px; height: 20px; flex: 0 0 20px; fill: #38bdf8; color: white; }
+.city-banner__state { margin: 2px 0 0; color: rgb(255 255 255 / 88%); font-size: 12px; font-weight: 600; }
+.city-banner__official {
+  z-index: 1;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: white;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+}
+.city-banner__official svg { width: 14px; height: 14px; }
+.city-banner__watermark {
+  display: block;
+  width: clamp(70px, 15cqw, 138px);
+  height: clamp(70px, 15cqw, 138px);
+  object-fit: contain;
+  pointer-events: none;
+}
+.city-banner__details {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.city-banner__detail { display: flex; min-width: 0; align-items: center; gap: 9px; }
+.city-banner__detail > svg { width: 19px; height: 19px; flex: 0 0 19px; color: #19875a; }
+.city-banner__detail > div { display: grid; min-width: 0; gap: 2px; }
+.city-banner__detail--identity { display: grid; grid-template-columns: 19px minmax(0, 1fr); }
+.city-banner__detail--identity > .city-banner__status { grid-column: 2; justify-self: center; margin: 4px 0 0; }
+
+@container (max-width: 640px) {
+  .city-banner__layout { grid-template-columns: minmax(0, 1fr); }
+  .city-banner__identity {
+    grid-template-columns: 44px minmax(0, 1fr) clamp(110px, 30cqw, 140px);
+    min-height: 116px;
+    gap: 8px;
+    padding: 0 0 0 12px;
+  }
+  .city-banner__identity::before { width: clamp(96px, 32%, 136px); }
+  .city-banner__thumbnail { width: 44px; height: 44px; flex-basis: 44px; }
+  .city-banner__watermark {
+    width: clamp(100px, 28cqw, 132px);
+    height: clamp(100px, 28cqw, 132px);
+  }
+  .city-banner__official > span { display: none; }
+  .city-banner__details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px 12px;
+  }
+}
+@container (max-width: 420px) {
+  .city-banner__details { grid-template-columns: minmax(0, 1fr); }
 }
 
+
+
 .urban-shell { background: var(--urban-bg); color: var(--urban-navy); }
-.urban-surface { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px; }
+.urban-surface { background: var(--color-surface); border: 1px solid var(--color-border-subtle); border-radius: 16px; }
 .urban-eyebrow { color: var(--color-muted); font-size: .68rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
 .urban-button-primary { background: var(--urban-navy); color: white; transition: background .2s, transform .2s; }
 .urban-button-primary:hover { background: #214a7b; transform: translateY(-1px); }
 .urban-button-accent { background: var(--urban-purple); color: white; transition: background .2s, transform .2s; }
 .urban-button-accent:hover { background: #5720b6; transform: translateY(-1px); }
 .leaflet-container { font-family: inherit; }
+.leaflet-control-attribution { background-color: var(--color-surface) !important; }
 .leaflet-control-zoom a { color: var(--urban-navy) !important; }
 .urban-map .leaflet-control-zoom {
   overflow: hidden;

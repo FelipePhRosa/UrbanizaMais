@@ -100,7 +100,7 @@ export default function SlashMenu({ query, anchorRect, isMobile, onPick, onClose
   if (isMobile) {
     return (
       <div className="fixed inset-0 z-[1300] md:hidden">
-        <button type="button" aria-label="Fechar menu de blocos" onClick={onClose} className="absolute inset-0 cursor-default bg-[var(--color-ink)]/45 backdrop-blur-sm" />
+        <button type="button" aria-label="Fechar menu de blocos" onClick={onClose} className="absolute inset-0 cursor-default bg-[var(--color-ink)]/45" />
         <div className="absolute inset-x-0 bottom-0 overflow-hidden rounded-t-2xl border-t border-[var(--color-border)] bg-[var(--color-surface)] pb-[max(8px,env(safe-area-inset-bottom))] shadow-2xl">
           <span className="mx-auto mt-2 block h-1 w-10 rounded-full bg-[var(--color-border)]" aria-hidden="true" />
           {body}
