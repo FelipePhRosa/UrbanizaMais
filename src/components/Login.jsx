@@ -1,28 +1,104 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
 import loginimg from '../assets/login.jpg';
 import Brand from './Brand';
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const LOGIN_TIMEOUT_MS = 15000;
+
+function getLoginErrorMessage(status) {
+  switch (status) {
+    case 400:
+      return 'Preencha e-mail/usuário e senha para continuar.';
+    case 401:
+      return 'E-mail/usuário ou senha incorretos.';
+    case 403:
+      return 'Conta suspensa. Entre em contato com o suporte.';
+    case 404:
+      return 'Não foi possível concluir o login. Tente novamente.';
+    case 429:
+      return 'Muitas tentativas. Aguarde alguns minutos e tente de novo.';
+    case 500:
+      return 'Erro no servidor. Tente novamente em instantes.';
+    default:
+      return 'Erro inesperado. Tente novamente.';
+  }
+}
+
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const inFlightRef = useRef(false);
+  const attemptRef = useRef(0);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   async function handleLogin(e) {
     e.preventDefault();
+    // Guarda de reentrância por ref: o estado `loading` só vale no próximo
+    // render, então dois submits no mesmo tick passariam por ele.
+    if (inFlightRef.current) return;
+
+    // Lê os valores do DOM no momento do submit: o payload sempre reflete o
+    // que está visível no campo, mesmo se o preenchimento (ex.: autofill)
+    // não tiver passado pelo estado React ainda.
+    const formData = new FormData(e.currentTarget);
+    const cleanIdentifier = String(formData.get('identifier') || '').trim();
+    const currentPassword = String(formData.get('password') || '');
+
+    if (!cleanIdentifier) {
+      setError('Informe seu e-mail ou nome de usuário.');
+      return;
+    }
+    if (cleanIdentifier.includes('@') && !EMAIL_PATTERN.test(cleanIdentifier)) {
+      setError('Formato de e-mail inválido. Confira o endereço digitado.');
+      return;
+    }
+    if (!currentPassword) {
+      setError('Digite sua senha.');
+      return;
+    }
+
+    inFlightRef.current = true;
+    setError(null);
+    setLoading(true);
+
+    const attempt = ++attemptRef.current;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), LOGIN_TIMEOUT_MS);
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identifier, password }) });
-      if (!res.ok) throw new Error('Login inválido');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: cleanIdentifier, password: currentPassword }),
+        signal: controller.signal,
+      });
+      if (!res.ok) throw Object.assign(new Error('Login request failed'), { status: res.status });
+
       const data = await res.json();
+      if (attempt !== attemptRef.current) return;
       login(data.token, { userId: data.userId, nameUser: data.nameUser, fullName: data.fullName, birth_date: data.birth_date, email: data.email, telefone: data.telefone, role: data.role, avatar_url: data.avatar_url, is_verified: data.is_verified, requiresOTP: data.requiresOTP });
       navigate(data.requiresOTP === 'true' || data.requiresOTP === true ? '/verifyEmail' : '/home');
-      setError(null);
     } catch (err) {
-      setError(err.message);
+      if (attempt !== attemptRef.current) return;
+      if (err.name === 'AbortError') {
+        setError('A conexão demorou demais. Verifique sua internet e tente novamente.');
+      } else if (err instanceof TypeError) {
+        setError('Não foi possível conectar ao servidor. Verifique sua conexão e tente de novo.');
+      } else {
+        setError(getLoginErrorMessage(err.status));
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+      if (attempt === attemptRef.current) {
+        setLoading(false);
+        inFlightRef.current = false;
+      }
     }
   }
 
@@ -51,24 +127,24 @@ export default function Login() {
             <p className="mt-2 text-sm text-[var(--color-muted)]">Bem-vindo de volta ao Urbaniza+.</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} noValidate className="space-y-5">
             <label className="block">
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">E-mail ou nome de usuário</span>
             <span className="relative block">
               <Mail size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
-              <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)]" />
+              <input name="identifier" value={identifier} onChange={(e) => setIdentifier(e.target.value)} disabled={loading} autoComplete="username" placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60" />
               </span>
               </label>
             <label className="block">
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">Senha</span>
               <span className="relative block">
                 <LockKeyhole size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)]" /></span></label>
+              <input name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} autoComplete="current-password" placeholder="Digite sua senha" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60" /></span></label>
             <div className="-mt-2 flex justify-end">
               <Link to="/redefinirsenha" className="text-sm font-bold text-[var(--color-primary)] hover:underline">Esqueci minha senha</Link>
               </div>
             {error && <p role="alert" className="rounded-xl bg-[#fff1f1] px-3 py-2 text-sm font-medium text-[#c44747]">{error}</p>}
-            <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-tint)]">Entrar <ArrowRight size={17} /></button>
+            <button type="submit" disabled={loading} className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] font-bold text-white transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60">{loading ? 'Entrando...' : <>Entrar <ArrowRight size={17} /></>}</button>
           </form>
 
           <div className="mt-7 flex items-center justify-between gap-4 text-sm">
