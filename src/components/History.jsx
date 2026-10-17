@@ -49,7 +49,7 @@ function History() {
   }, []);
 
   return (
-    <section className="urban-surface w-full min-w-0 overflow-hidden rounded-xl">
+    <section className="w-full min-w-0 overflow-hidden rounded-xl">
       {loading ? (
         <div className="flex min-h-48 items-center justify-center px-4 py-10 sm:min-h-64 sm:px-6">
           <div
@@ -82,7 +82,7 @@ function History() {
         </div>
       ) : (
         <>
-          <header className="flex flex-col gap-1 border-b border-[var(--color-border-subtle)] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-6">
+          <header className="flex flex-col gap-1 border-b border-[var(--color-border)] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-6">
             <div className="min-w-0">
               <h2 className="text-base font-bold text-[var(--color-ink)]">
                 Suas denúncias

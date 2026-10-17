@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import {
   Camera,
   CarFront,
+  ChevronDown,
   CircleDashed,
   CircleHelp,
   Droplet,
@@ -28,7 +29,7 @@ const CATEGORIES = [
 function Field({ label, children }) {
   return (
     <label className="block space-y-1.5">
-      <span className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-muted)]">{label}</span>
+      <span className="text-xs font-bold tracking-[0.12em] text-[var(--color-muted)]">{label}</span>
       {children}
     </label>
   );
@@ -36,6 +37,14 @@ function Field({ label, children }) {
 
 function inputClasses() {
   return 'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/15';
+}
+
+function selectClasses() {
+  return `${inputClasses()} appearance-none pr-10`;
+}
+
+function SelectArrow() {
+  return <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]" size={16} />;
 }
 
 export default function ReportModal({ isOpen, onClose, lat, lng }) {
@@ -54,6 +63,20 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [loadingNeighborhoods, setLoadingNeighborhoods] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousRootOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousRootOverflow;
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -181,10 +204,10 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
   const canSubmit = titulo && descricao && endereco && tipoProblema && selectedCity && selectedNeighborhood;
 
   return (
-    <div className="fixed inset-0 z-[1200] grid place-items-center p-3 sm:p-6">
-      <button type="button" className="absolute inset-0 cursor-default bg-[var(--color-ink)]/45 backdrop-blur-sm" onClick={onClose} aria-label="Fechar modal" />
+    <div className="fixed inset-0 z-[2000] grid place-items-center p-3 sm:p-6">
+      <button type="button" className="absolute inset-0 cursor-default bg-[var(--color-ink)]/35" onClick={onClose} aria-label="Fechar modal" />
 
-      <form onSubmit={handleSubmit} className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-[var(--color-ink)] shadow-2xl sm:p-7">
+      <form onSubmit={handleSubmit} className="relative max-h-[calc(90dvh-1.5rem)] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-5 text-[var(--color-ink)] shadow-2xl sm:p-7">
         <header className="mb-6 flex items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-5">
           <div>
             <p className="urban-eyebrow">Contribua com a cidade</p>
@@ -231,10 +254,10 @@ export default function ReportModal({ isOpen, onClose, lat, lng }) {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Estado"><select value={selectedState} onChange={(event) => { setSelectedState(Number(event.target.value)); setSelectedCity(''); }} className={inputClasses()} required><option value="">Selecione o estado</option>{states.map((state) => <option key={state.id} value={state.id}>{state.name} ({state.uf})</option>)}</select></Field>
-            <Field label="Cidade"><select value={selectedCity} onChange={(event) => setSelectedCity(Number(event.target.value))} disabled={!selectedState || loadingCities} className={`${inputClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{!selectedState ? 'Selecione primeiro o estado' : loadingCities ? 'Carregando...' : 'Selecione a cidade'}</option>{cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}</select></Field>
+            <Field label="Estado"><span className="relative block"><select value={selectedState} onChange={(event) => { setSelectedState(Number(event.target.value)); setSelectedCity(''); }} className={selectClasses()} required><option value="">Selecione o estado</option>{states.map((state) => <option key={state.id} value={state.id}>{state.name} ({state.uf})</option>)}</select><SelectArrow /></span></Field>
+            <Field label="Cidade"><span className="relative block"><select value={selectedCity} onChange={(event) => setSelectedCity(Number(event.target.value))} disabled={!selectedState || loadingCities} className={`${selectClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{!selectedState ? 'Selecione primeiro o estado' : loadingCities ? 'Carregando...' : 'Selecione a cidade'}</option>{cities.map((city) => <option key={city.id} value={city.id}>{city.name}</option>)}</select><SelectArrow /></span></Field>
           </div>
-          <Field label="Bairro"><select value={selectedNeighborhood} onChange={(event) => setSelectedNeighborhood(Number(event.target.value))} disabled={!selectedCity || loadingNeighborhoods} className={`${inputClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{loadingNeighborhoods ? 'Carregando...' : !selectedCity ? 'Selecione primeiro a cidade' : neighborhoods.length === 0 ? 'Nenhum bairro cadastrado' : 'Selecione o bairro'}</option>{neighborhoods.map((neighborhood) => <option key={neighborhood.id} value={neighborhood.id}>{neighborhood.name}</option>)}</select></Field>
+          <Field label="Bairro"><span className="relative block"><select value={selectedNeighborhood} onChange={(event) => setSelectedNeighborhood(Number(event.target.value))} disabled={!selectedCity || loadingNeighborhoods} className={`${selectClasses()} disabled:cursor-not-allowed disabled:opacity-50`} required><option value="">{loadingNeighborhoods ? 'Carregando...' : !selectedCity ? 'Selecione primeiro a cidade' : neighborhoods.length === 0 ? 'Nenhum bairro cadastrado' : 'Selecione o bairro'}</option>{neighborhoods.map((neighborhood) => <option key={neighborhood.id} value={neighborhood.id}>{neighborhood.name}</option>)}</select><SelectArrow /></span></Field>
 
           <Field label="Endereço"><textarea value={endereco} onChange={(event) => setEndereco(event.target.value)} placeholder="Confirme o endereço da denúncia" className={`${inputClasses()} min-h-20 resize-y`} required /></Field>
 

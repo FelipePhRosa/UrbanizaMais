@@ -19,7 +19,7 @@ function EmptyReports() {
 
 function ReportRow({ id, image, status, icon, category, title, address, time, likes, comments, likedByCurrentUser }) {
   return (
-    <article className="group flex min-w-0 items-center gap-3 border-b border-[var(--color-border-subtle)] py-3 last:border-0">
+    <article className="group flex min-w-0 items-center gap-4 border-b border-[var(--color-border-subtle)] py-3 last:border-0">
       <img src={image} alt="Imagem da Denúncia" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">
@@ -35,7 +35,7 @@ function ReportRow({ id, image, status, icon, category, title, address, time, li
           <LikeButton reportId={id} initialLiked={likedByCurrentUser} initialLikes={likes} />
         </div>
       </div>
-      <Link to={`/report/${id}`} aria-label="Abrir relato" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--color-soft)] text-[var(--color-ink)] opacity-80 transition group-hover:bg-[var(--color-primary-tint)] group-hover:text-[var(--color-primary)]">
+      <Link to={`/report/${id}`} aria-label="Abrir relato" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900 hover:border-orange-300 dark:hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400">
         <ArrowDownRight size={15} />
       </Link>
     </article>
@@ -51,7 +51,7 @@ function ReportCard({ reports, id, image, status, statusColor, icon, category, t
           <ReportRow
             key={report.id}
             id={report.id}
-            image={report.image ? `${import.meta.env.VITE_API_URL}/uploads/${report.image}` : '/placeholder.png'}
+            image={report.image ? `${import.meta.env.VITE_API_URL}/uploads/${report.image}` : '/src/assets/errorImg.png'}
             status={report.status}
             category={report.category}
             title={report.reportTitle}

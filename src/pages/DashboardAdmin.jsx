@@ -68,7 +68,7 @@ export default function DashboardAdmin() {
   if (loading) return <Layout><main className="grid min-h-[70vh] place-items-center p-6 text-sm text-[var(--color-muted)]">Carregando painel administrativo…</main></Layout>;
   if (error) return <Layout><main className="p-4 md:p-8"><div role="alert" className="rounded-xl border border-[var(--color-danger)] bg-[var(--color-danger-tint)] p-4 text-sm text-[var(--color-danger)]">{error}</div></main></Layout>;
 
-  return <Layout><main className="w-full px-4 py-4 md:px-8 md:py-6">
+  return <Layout><main className="w-full px-4 py-4 md:px-8 md:py-6 pb-20">
     <header className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="urban-eyebrow">Administração da plataforma</p><h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--color-ink)]">Visão geral</h1><p className="mt-1 text-sm text-[var(--color-muted)]">Acompanhe a moderação e os principais dados do Urbaniza+.</p></div><span className="inline-flex w-fit items-center gap-2 rounded-full bg-[var(--color-success-tint)] px-3 py-1.5 text-xs font-bold text-[var(--color-success)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--color-success)]" /> Dados atuais</span></header>
 
     <section aria-label="Indicadores administrativos" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">

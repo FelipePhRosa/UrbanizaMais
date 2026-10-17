@@ -57,7 +57,7 @@ export default function NewsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-surface)]">
-      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
         <div className="mx-auto flex h-16 max-w-[1080px] items-center justify-between gap-3 px-4 md:h-[72px] md:px-8">
           <Link to="/" aria-label="Urbaniza+"><Brand /></Link>
           <div className="flex items-center gap-2">

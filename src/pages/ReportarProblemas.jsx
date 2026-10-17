@@ -126,7 +126,7 @@ export default function ReportarProblemas() {
 
   return (
     <Layout>
-      <main className="mx-auto w-full max-w-[900px] px-4 py-5 md:px-8">
+      <main className="mx-auto w-full max-w-[900px] px-4 py-5 md:px-8 mb-15">
         <header className="mb-5">
           <p className="urban-eyebrow">Participação cidadã</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-[var(--color-ink)]">Novo relato</h1>

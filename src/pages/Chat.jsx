@@ -1,10 +1,30 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { ChevronLeft, EllipsisVertical, Heart, Laugh, MessageCircle, MoreHorizontal, SendHorizonal, Smile, ThumbsUp, Trash2 } from 'lucide-react';
+import { ChevronLeft, Heart, Laugh, MessageCircle, MoreHorizontal, SendHorizonal, Smile, ThumbsUp, Trash2 } from 'lucide-react';
 import Layout from '../components/Layout';
-import { AuthContext } from '../context/AuthContext';
 import { db } from '../Firebase/index';
+import { AuthContext } from '../context/AuthContext';
+
+function UserAvatar({ user, name }) {
+  const avatarUrl = (user?.avatar_url || user?.foto || '').trim();
+  const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+  let source = '/cityIcon.png';
+
+  if (/^(blob:|data:|https?:\/\/)/i.test(avatarUrl)) {
+    source = avatarUrl;
+  } else if (avatarUrl.startsWith('/frontend/public/')) {
+    source = avatarUrl.replace('/frontend/public', '');
+  } else if (avatarUrl.replace(/^\/+/, '').startsWith('uploads/')) {
+    source = `${apiUrl}/${avatarUrl.replace(/^\/+/, '')}`;
+  } else if (avatarUrl && !avatarUrl.startsWith('/')) {
+    source = `${apiUrl}/uploads/${avatarUrl}`;
+  } else if (avatarUrl) {
+    source = avatarUrl;
+  }
+
+  return <img src={source} alt={name || ''} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/cityIcon.png'; }} className="h-8 w-8 shrink-0 rounded-full border border-[var(--color-border)] object-cover" />;
+}
 
 const FORBIDDEN_WORDS = [
   'merda', 'bosta', 'porra', 'caralho', 'puta', 'put4', 'pu74', 'fod4', 'porr4',
@@ -71,29 +91,6 @@ function groupMessages(messages, currentUserId) {
 
   return groups;
 }
-
-
-function UserAvatar({ user, current = false, name = 'Anônimo' }) {
-  const foto = user?.foto || user?.avatar_url;
-  const source = foto
-    ? foto.includes('http') || foto.startsWith('data:') || foto.startsWith('blob:')
-      ? foto
-      : `${import.meta.env.VITE_API_URL}/uploads/${foto.replace(/^\/+/, '')}`
-    : '/cityIcon.png';
-
-  return (
-    <img
-      src={source}
-      alt={current ? 'Seu avatar' : `Avatar de ${name}`}
-      onError={(event) => {
-        event.currentTarget.onerror = null;
-        event.currentTarget.src = '/cityIcon.png';
-      }}
-      className="h-7 w-7 shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] object-cover"
-    />
-  );
-}
-
 
 function ReactionSummary({ message, isCurrentUser, userId }) {
   const reactions = message.reactions || {};
@@ -166,6 +163,7 @@ function ChatMessage({ group, now, userId, role, currentAvatar, reactionMessageI
 
 function ChatComunidade() {
   const { token, user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [role, setRole] = useState(null);
   const [mensagens, setMensagens] = useState([]);
   const [texto, setTexto] = useState('');
@@ -266,14 +264,12 @@ function ChatComunidade() {
       console.error('Erro ao adicionar reação:', error);
     }
   }
-
-  if (!token) return <Navigate to="/login" />;
-
+  if (!token) return <Navigate to="/login" replace />;
   return (
     <Layout hideMobileNavigation>
-      <main className="min-h-[calc(100dvh-64px)] bg-[var(--color-surface-muted)] p-0 md:min-h-[calc(100dvh-72px)] md:p-3 lg:p-4">
-        <div className="grid h-[calc(100dvh-64px)] w-full overflow-hidden border-y border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm md:h-[calc(100dvh-96px)] md:grid-cols-[260px_minmax(0,1fr)] md:rounded-2xl md:border">
-          <aside className="chat-conversation-sidebar hidden border-r border-[var(--color-border)] bg-[var(--color-surface-muted)] p-4 md:block">
+      <main className="min-h-[calc(100dvh-64px)] bg-[var(--color-surface-muted)] p-0 md:min-h-[calc(100dvh-72px)] md:p-3 lg:p-4 overflow-hidden">
+        <div className="grid h-[calc(100dvh-64px)] w-full overflow-hidden border-y border-gray-300 dark:border-slate-700 bg-[var(--color-surface)] shadow-sm md:h-[calc(100dvh-96px)] md:grid-cols-[260px_minmax(0,1fr)] md:rounded-2xl md:border">
+          <aside className="chat-conversation-sidebar hidden border-r border-gray-300 dark:border-slate-700 bg-[var(--color-surface-muted)] p-4 md:block">
             <div className="flex items-center justify-between">
               <div><p className="urban-eyebrow">Comunidade</p><h1 className="mt-1 text-lg font-extrabold text-[var(--color-ink)]">Conversas</h1></div>
               <button type="button" className="grid h-8 w-8 place-items-center rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-primary-tint)] hover:text-[var(--color-primary)]" aria-label="Mais opções"><MoreHorizontal size={17} /></button>
@@ -283,18 +279,18 @@ function ChatComunidade() {
             </div>
             <p className="mt-6 text-xs leading-5 text-[var(--color-muted)]">Converse com moradores e mantenha o foco em soluções para a cidade.</p>
           </aside>
-
           <section className="flex min-h-0 min-w-0 flex-col">
-            <header className="flex min-h-16 items-center justify-between gap-3 border-b border-[var(--color-border)] px-3 py-2.5 sm:px-5">
-              <div className="flex min-w-0 items-center gap-2.5"><Link to="/home" aria-label="Voltar" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-primary-tint)] hover:text-[var(--color-primary)]"><ChevronLeft size={18} /></Link><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--color-primary-tint)] text-[var(--color-primary)] md:hidden"><MessageCircle size={16} /></span><div className="min-w-0"><h2 className="truncate text-sm font-extrabold text-[var(--color-ink)] sm:text-base">Chat da comunidade</h2><p className="text-[11px] text-[var(--color-muted)]">{mensagens.length} mensagens · espaço público</p></div></div>{isModerator(role) && <button type="button" onClick={chatClear} className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-danger)]/20 px-2.5 py-2 text-[11px] font-bold text-[var(--color-danger)] hover:bg-[var(--color-danger-tint)]"><Trash2 size={13} /> <span className="hidden sm:inline">Limpar chat</span></button>}</header>
-            <div className="border-b border-[var(--color-border-subtle)] bg-[var(--color-surface-muted)] px-4 py-2 text-center text-[11px] text-[var(--color-muted)]">Mantenha o respeito e foque em soluções para a comunidade.</div>
+            <header className="flex min-h-16 items-center justify-between gap-3 border-b border-gray-300 dark:border-slate-700 px-3 py-2.5 sm:px-5">
+              <div className="flex min-w-0 items-center gap-2.5"><button onClick={() => navigate(-1)} aria-label="Voltar" className="md:hidden grid h-9 w-9 shrink-0 place-items-center rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-primary-tint)] hover:text-[var(--color-primary)]"><ChevronLeft size={22} /></button><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--color-primary-tint)] text-[var(--color-primary)] md:hidden"><MessageCircle size={16} /></span><div className="min-w-0"><h2 className="truncate text-sm font-extrabold text-[var(--color-ink)] sm:text-base">Chat da comunidade</h2><p className="text-[11px] text-[var(--color-muted)]">{mensagens.length} mensagens · espaço público</p></div></div>{isModerator(role) && <button type="button" onClick={chatClear} className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-danger)]/20 px-2.5 py-2 text-[11px] font-bold text-[var(--color-danger)] hover:bg-[var(--color-danger-tint)]"><Trash2 size={13} /> <span className="hidden sm:inline">Limpar chat</span></button>}</header>
+
+            <div className="border-b border-gray-300 dark:border-slate-700 bg-gray-300/80 dark:bg-gray-800/60 px-4 py-2 text-center text-[11px] text-[var(--color-muted)]">Mantenha o respeito e foque em soluções para a comunidade.</div>
 
             <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-5">
               {mensagensAgrupadas.length === 0 ? <div className="grid h-full place-items-center py-16 text-center"><div><span className="mx-auto grid h-11 w-11 place-items-center rounded-2xl bg-[var(--color-primary-tint)] text-[var(--color-primary)]"><MessageCircle size={20} /></span><h3 className="mt-3 text-sm font-bold text-[var(--color-ink)]">Comece a conversa</h3><p className="mt-1 max-w-xs text-xs leading-5 text-[var(--color-muted)]">Ainda não há mensagens. Compartilhe uma ideia ou uma atualização do seu bairro.</p></div></div> : <div className="space-y-4">{mensagensAgrupadas.map((group, index) => <ChatMessage key={`${group.messages[0].id}-${index}`} group={group} now={currentTime} userId={user?.userId} role={role} currentAvatar={avatar} reactionMessageId={mostrarReacoes} onToggleReactions={(messageId) => setMostrarReacoes((current) => current === messageId ? null : messageId)} onReact={adicionarReacao} onDelete={msgDelete} />)}<div ref={ultimaMensagemRef} /></div>}
             </div>
 
-            <form onSubmit={(event) => { event.preventDefault(); enviarMensagem(); }} className="shrink-0 border-t border-[var(--color-border)] bg-[var(--color-surface)] p-2.5 sm:p-3">
-              <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-1.5">
+            <form onSubmit={(event) => { event.preventDefault(); enviarMensagem(); }} className="shrink-0 border-t border-gray-300 dark:border-slate-700 bg-[var(--color-surface)] p-2.5 sm:p-3">
+              <div className="flex items-center gap-2 rounded-xl border border-gray-300 dark:border-slate-700 bg-[var(--color-surface-muted)] p-1.5">
                 <button type="button" onClick={() => alert('Emoji picker em breve!')} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-primary-tint)] hover:text-[var(--color-primary)]" aria-label="Adicionar emoji"><Smile size={17} /></button>
                 <input type="text" value={texto} onChange={(event) => setTexto(event.target.value)} onKeyDown={handleKeyPress} className="min-w-0 flex-1 bg-transparent px-1 text-sm text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)]" placeholder="Escreva uma mensagem..." aria-label="Mensagem" />
                 <button type="submit" disabled={!texto.trim()} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--color-primary)] text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-35" aria-label="Enviar mensagem"><SendHorizonal size={16} /></button>

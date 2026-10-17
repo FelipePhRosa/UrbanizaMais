@@ -18,6 +18,7 @@ import Layout from './Layout';
 import History from './History';
 import About from './About';
 import useSettingsData from '../hooks/useSettingsData';
+import Notificacoes from './Notifications';
 
 const TABS = [
   { id: 'account', label: 'Minha conta', icon: User },
@@ -285,7 +286,7 @@ function NotificationsTab({ notifications, toggleNotification }) {
   const labels = { email: 'E-mail', push: 'Push', sms: 'SMS' };
 
   return (
-    <Section
+    <Section 
       title="Preferências de notificação"
       description="Escolha como deseja receber atualizações da plataforma."
     >
@@ -328,53 +329,34 @@ function NotificationsTab({ notifications, toggleNotification }) {
   );
 }
 
-function AppearanceTab({ darkMode, setDarkMode }) {
+function AppearanceTab({ darkMode, setDarkMode, fontSize, setFontSize }) {
+  const fontSizes = [
+    { value: 'small', label: 'Pequeno', textClass: 'text-xs' },
+    { value: 'medium', label: 'Médio', textClass: 'text-sm' },
+    { value: 'large', label: 'Grande', textClass: 'text-base' },
+  ];
+
   return (
-    <Section
-      title="Aparência"
-      description="Ajuste o tema para o seu ambiente de uso."
-    >
+    <Section title="Aparência" description="Ajuste o tema para o seu ambiente de uso.">
       <div className="space-y-5">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-muted)]">
-            Tema
-          </p>
-
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-muted)]">Tema</p>
           <div className="grid gap-2 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => setDarkMode(false)}
-              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${
-                !darkMode
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]'
-                  : 'border-[var(--color-border)] text-[var(--color-muted)]'
-              }`}
-            >
-              <Sun size={17} />
-              Claro
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDarkMode(true)}
-              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${
-                darkMode
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]'
-                  : 'border-[var(--color-border)] text-[var(--color-muted)]'
-              }`}
-            >
-              <Moon size={17} />
-              Escuro
-            </button>
+            <button type="button" onClick={() => setDarkMode(false)} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${!darkMode ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-muted)]'}`}><Sun size={17} /> Claro</button>
+            <button type="button" onClick={() => setDarkMode(true)} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-bold ${darkMode ? 'border-[var(--color-primary)] bg-[var(--color-primary-tint)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-muted)]'}`}><Moon size={17} /> Escuro</button>
           </div>
         </div>
-
         <Field label="Tamanho da fonte">
-          <select className={FIELD} defaultValue="medium">
-            <option value="small">Pequeno</option>
-            <option value="medium">Médio</option>
-            <option value="large">Grande</option>
-          </select>
+          <div role="radiogroup" aria-label="Tamanho da fonte" className="grid grid-cols-3 gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-1">
+            {fontSizes.map((option) => (
+              <label key={option.value} className="cursor-pointer">
+                <input type="radio" name="font-size" value={option.value} checked={fontSize === option.value} onChange={() => setFontSize(option.value)} className="peer sr-only" />
+                <span className={`flex min-h-10 items-center justify-center rounded-lg px-2 font-semibold transition peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--color-primary)] ${option.textClass} ${fontSize === option.value ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-muted)] hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)]'}`}>
+                  {option.label}
+                </span>
+              </label>
+            ))}
+          </div>
         </Field>
       </div>
     </Section>
@@ -386,36 +368,15 @@ export default function SettingsInterface() {
   const [activeTab, setActiveTab] = useState('account');
 
   function renderTab() {
-    if (activeTab === 'account') {
-      return <AccountTab {...settings} />;
-    }
-
-    if (activeTab === 'notifications') {
-      return (
-        <NotificationsTab
-          notifications={settings.notifications}
-          toggleNotification={settings.toggleNotification}
-        />
-      );
-    }
-
-    if (activeTab === 'appearance') {
-      return (
-        <AppearanceTab
-          darkMode={settings.darkMode}
-          setDarkMode={settings.setDarkMode}
-        />
-      );
-    }
-
-    if (activeTab === 'history') {
-      return <History />;
-    }
+    if (activeTab === 'account') return <AccountTab {...settings} />;
+    if (activeTab === 'notifications') return <Notificacoes embedded />;
+    if (activeTab === 'appearance') return <AppearanceTab darkMode={settings.darkMode} setDarkMode={settings.setDarkMode} fontSize={settings.fontSize} setFontSize={settings.setFontSize} />;
+    if (activeTab === 'history') return <div className="urban-surface overflow-hidden"><History /></div>;
   }
 
   return (
     <Layout>
-      <main className="urban-settings min-h-[calc(100dvh-72px)] bg-[var(--color-surface-muted)] px-3 py-4 sm:px-5 md:px-8 md:py-6">
+      <main className="urban-settings min-h-[calc(100dvh-72px)] bg-[var(--color-surface-muted)] px-3 py-4 sm:px-5 md:px-8 md:py-6 pb-20">
         <div className="mx-auto max-w-[1120px]">
           <header className="mb-5">
             <p className="urban-eyebrow">Preferências</p>
