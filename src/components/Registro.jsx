@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthShell from './AuthShell';
 import loginImage from '../assets/login.jpg';
+import loginDark from '../assets/loginDark.png'
+import { ThemeContext } from '../context/ThemeContext';
 
-const fieldClass = 'h-11 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3.5 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60';
+const fieldClass = 'h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/30 bg-[var(--color-lgn)] pl-4 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black';
 
 export default function Registro() {
   const [step, setStep] = useState(1);
@@ -24,6 +26,7 @@ export default function Registro() {
   const [loadingNeighborhoods, setLoadingNeighborhoods] = useState(false);
   const [neighborhoodId, setNeighborhoodId] = useState('');
   const [error, setError] = useState(null);
+  const { darkMode, setDarkMode } = useContext(ThemeContext)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,7 +82,7 @@ export default function Registro() {
   }
 
   const labelClass = 'mb-1.5 block text-xs font-bold text-[var(--color-ink)]';
-  return <AuthShell eyebrow={`Cadastro · Etapa ${step} de 2`} title="Criar conta" description={step === 1 ? 'Comece com seus dados básicos para participar da cidade.' : 'Complete seu cadastro para registrar e acompanhar relatos.'} sideImage={loginImage}>
+  return <AuthShell eyebrow={`Cadastro · Etapa ${step} de 2`} title="Criar conta" description={step === 1 ? 'Comece com seus dados básicos para participar da cidade.' : 'Complete seu cadastro para registrar e acompanhar relatos.'} sideImage={darkMode ? loginDark : loginImage}>
     <div className="mb-7 flex gap-2" aria-label={`Etapa ${step} de 2`}>
       <span className={`h-1.5 flex-1 rounded-full ${step >= 1 ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]'}`} />
         <span className={`h-1.5 flex-1 rounded-full ${step >= 2 ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]'}`} />
@@ -162,14 +165,14 @@ export default function Registro() {
       </label>
       </div>
       <div className="flex gap-3 pt-2">
-        <button type="button" onClick={() => setStep(1)} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-white text-sm font-bold text-[var(--color-ink)] transition hover:bg-[var(--color-surface-muted)]">
+        <button type="button" onClick={() => setStep(1)} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-white dark:bg-gray-800 text-sm font-bold text-[var(--color-ink)] transition hover:bg-[var(--color-surface-muted)]">
           <ArrowLeft size={17} /> Voltar
         </button>
-        <button type="submit" className="flex h-12 flex-1 items-center justify-center rounded-xl bg-[var(--color-primary)] text-sm font-bold text-white transition hover:brightness-95">
+        <button type="submit" className="flex h-12 flex-1 items-center justify-center rounded-xl bg-[var(--color-primary)] text-sm font-bold text-white transition hover:brightness-125">
           Finalizar
         </button>
       </div>
     </form>}
-    <p className="mt-7 text-center text-sm text-[var(--color-muted)]">Já tem uma conta? <Link to="/login" className="font-bold text-[var(--color-primary)] hover:underline">Faça login</Link></p>
+    <p className="mt-7 text-center text-sm text-[var(--color-muted)]">Já tem uma conta? <Link to="/login" className="font-bold text-[var(--color-primary)] dark:text-white hover:underline">Faça login</Link></p>
   </AuthShell>;
 }
