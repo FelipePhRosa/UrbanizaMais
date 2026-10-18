@@ -16,7 +16,7 @@ export default function AuthShell({ eyebrow = 'Urbaniza+', title, description, b
         </div>
         <p className="relative text-sm text-white/45">Urbaniza+ · Cidade melhor, juntos.</p>
       </section>
-      <section className="flex items-center justify-center px-5 py-10 sm:px-10 lg:bg-white">
+      <section className="flex items-center justify-center px-5 py-10 sm:px-10 bg-[var(--color-surface)] dark:bg-[var(--color-surface)]">
         <div className="w-full max-w-[520px]">
           <div className="mb-10 lg:hidden"><Brand /></div>
           <Link to={backTo} className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-[var(--color-muted)] transition hover:text-[var(--color-primary)]"><ArrowLeft size={16} /> {backLabel}</Link>
