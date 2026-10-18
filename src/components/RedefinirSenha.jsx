@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KeyRound, Mail, ShieldCheck } from 'lucide-react';
 import AuthShell from './AuthShell';
+import { ThemeContext } from '../context/ThemeContext';
 import loginImage from '../assets/login.jpg';
+import loginDark from '../assets/loginDark.png'
 
 export default function RedefinirSenha() {
   const [step, setStep] = useState(1);
@@ -12,6 +14,7 @@ export default function RedefinirSenha() {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { darkMode } = useContext(ThemeContext)
   const redirectTimeoutRef = useRef(null);
   const navigate = useNavigate();
 
@@ -111,7 +114,7 @@ export default function RedefinirSenha() {
       eyebrow={`Recuperação · Etapa ${step} de 3`}
       title={title}
       description={description}
-      sideImage={loginImage}
+      sideImage={darkMode ? loginDark : loginImage}
     >
       <div className="mb-6 flex items-center gap-2" aria-label={`Etapa ${step} de 3`}>
         {[1, 2, 3].map((item) => (
@@ -134,11 +137,11 @@ export default function RedefinirSenha() {
           <label className="block">
             <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">E-mail da conta</span>
             <span className="relative block">
-              <Mail size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
+              <Mail size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
               <input
                 type="email"
-                placeholder="voce@exemplo.com"
-                className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-tint)]"
+                placeholder="voce@exemplo.com" 
+                className="h-12 w-full rounded-xl border border-gray-400 placeholder:text-black/80 dark:border-white/30 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
@@ -154,7 +157,7 @@ export default function RedefinirSenha() {
       {step === 2 && (
         <form onSubmit={handleVerifyCode} className="space-y-5">
           <div className="flex items-center gap-3 rounded-xl bg-[var(--color-primary-tint)] p-4 text-sm text-[var(--color-ink)]">
-            <ShieldCheck size={18} className="shrink-0 text-[var(--color-primary)]" />
+            <ShieldCheck size={18} className="shrink-0 text-[var(--color-primary)] dark:text-black/70" />
             <span>Código enviado para <strong>{email}</strong></span>
           </div>
           <label className="block">
@@ -163,7 +166,7 @@ export default function RedefinirSenha() {
               type="text"
               inputMode="numeric"
               placeholder="000000"
-              className="h-14 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-4 text-center text-2xl tracking-[.35em] outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-tint)]"
+              className="h-14 w-full rounded-xl border border-gray-400 placeholder:text-black/80 dark:border-white/30 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black"
               value={code}
               onChange={(event) => setCode(event.target.value)}
               maxLength={6}
@@ -184,11 +187,11 @@ export default function RedefinirSenha() {
           <label className="block">
             <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">Nova senha</span>
             <span className="relative block">
-              <KeyRound size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
+              <KeyRound size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
               <input
                 type="password"
                 placeholder="Digite a nova senha"
-                className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm outline-none transition focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-tint)]"
+                className="h-12 w-full rounded-xl border border-gray-400 placeholder:text-black/80 dark:border-white/30 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black"
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
                 required
