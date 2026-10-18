@@ -25,19 +25,41 @@ function RecentReports({ reports }) { const navigate = useNavigate(); return <se
 function Restricted() { return <Layout><main className="grid min-h-[70vh] place-items-center p-6"><div className="max-w-sm text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[var(--color-danger-tint)] text-[var(--color-danger)]"><LockKeyhole /></span><h1 className="mt-4 text-xl font-bold text-[var(--color-ink)]">Acesso restrito</h1><p className="mt-1 text-sm text-[var(--color-muted)]">Este painel é exclusivo para gestores municipais.</p></div></main></Layout>; }
 
 export default function DashboardMunicipal() {
-  const { user, token } = useContext(AuthContext); const navigate = useNavigate();
-  const [data, setData] = useState(null); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
-  const [period, setPeriod] = useState('all'); const [category, setCategory] = useState('all'); const [neighborhood, setNeighborhood] = useState('all'); const [status, setStatus] = useState('all');
+  const { user, token } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [cityInfo, setCityInfo] = useState(null);
+  const [period, setPeriod] = useState('all');
+  const [category, setCategory] = useState('all');
+  const [neighborhood, setNeighborhood] = useState('all');
+  const [status, setStatus] = useState('all');
   const hasAccess = String(user?.role) === '7';
-  const [view, setView] = useState('overview'); const [reportFilter, setReportFilter] = useState({ status: 'all', neighborhoodId: 'all' }); const [reportOrigin, setReportOrigin] = useState('overview');
+  const [view, setView] = useState('overview');
+  const [reportFilter, setReportFilter] = useState({ status: 'all', neighborhoodId: 'all' });
+  const [reportOrigin, setReportOrigin] = useState('overview');
   const openReports = (statusFilter, neighborhoodId = 'all') => { setReportFilter({ status: statusFilter, neighborhoodId }); setReportOrigin(view); setView('reports'); };
   const openNeighborhoods = () => setView('neighborhoods');
   useEffect(() => { if (!hasAccess) return; fetch(`${API}/dashboard`, { headers: token ? { Authorization: `Bearer ${token}` } : {} }).then(async (response) => { const payload = await response.json(); if (!response.ok) throw new Error(payload?.message || 'Não foi possível carregar o painel municipal.'); setData(payload); }).catch((requestError) => setError(requestError.message || 'Não foi possível carregar o painel municipal.')).finally(() => setLoading(false)); }, [hasAccess, token]);
 
   // GET /dashboard is intentionally the sole source for role 7; its AllReports payload is server-scoped to the municipality.
   const municipalReports = Array.isArray(data?.AllReports) ? data.AllReports : [];
+  const cityId = data?.city_id;
 
-  const cityId = user?.city_id ?? data?.city_id;
+  useEffect(() => {
+    if (!hasAccess || !cityId) return;
+    let active = true;
+    fetch(`${API}/cityById?cityId=${encodeURIComponent(cityId)}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+    .then(async (response) => {
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload?.message || 'Não foi possível carregar os dados da cidade.');
+      if (active) setCityInfo(payload?.cityInf ?? null);
+    })
+    .catch(() => { if (active) setCityInfo(null); });
+    return () => { active = false; };
+  }, [hasAccess, cityId, token]);
+
   const [bairros, setBairros] = useState([]); const [bairrosLoading, setBairrosLoading] = useState(true);
   const [novoBairro, setNovoBairro] = useState(''); const [editandoBairro, setEditandoBairro] = useState(null); const [nomeEditado, setNomeEditado] = useState('');
   const [salvandoBairro, setSalvandoBairro] = useState(false); const [bairroFeedback, setBairroFeedback] = useState(null);
@@ -113,7 +135,7 @@ export default function DashboardMunicipal() {
   if (!hasAccess) return <Restricted />;
   if (loading) return <Layout><main className="grid min-h-[70vh] place-items-center p-6 text-sm text-[var(--color-muted)]">Carregando dados do município…</main></Layout>;
   if (error) return <Layout><main className="p-4 md:p-8"><div role="alert" className="rounded-xl border border-[var(--color-danger)] bg-[var(--color-danger-tint)] p-4 text-sm text-[var(--color-danger)]">{error}</div></main></Layout>;
-  return <Layout><main className="w-full px-4 py-4 md:px-8 md:py-6">{view === 'overview' && <><div className='mb-5'><CityBanner cityId="camaqua-rs"/></div>
+  return <Layout><main className="w-full px-4 py-4 md:px-8 md:py-6">{view === 'overview' && <><div className='mb-5'><CityBanner cityId="camaqua-rs" coatArmsUrl={cityInfo?.coatArmsUrl ?? null} /></div> {console.log()}
     <section aria-label="Indicadores municipais" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"><MetricCard icon={FileText} label="Relatos registrados" value={municipalReports.length} description="Todos os status" tone="var(--color-primary)" onClick={() => openReports('all')} /><MetricCard icon={CheckCircle2} label="Aprovados" value={number(data?.TotalReports)} description="Relatos publicados" tone="var(--color-success)" onClick={() => openReports('aprovado')} /><MetricCard icon={AlertTriangle} label="Em análise" value={counts.pendente} description="Aguardando decisão" tone="var(--color-warning)" onClick={() => openReports('pendente')} /><MetricCard icon={XCircle} label="Rejeitados" value={counts.rejeitado} description="Relatos não publicados" tone="var(--color-danger)" onClick={() => openReports('rejeitado')} /><MetricCard icon={Users} label="População cadastrada" value={number(data?.TotalPopulationCity)} description="Usuários vinculados à cidade" tone="var(--color-primary)" /></section>
     <section className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,.75fr)]"><section className="urban-surface min-h-[300px] p-4 md:p-5"><h2 className="font-bold text-[var(--color-ink)]">Tendência de relatos</h2><p className="mt-1 text-xs text-[var(--color-muted)]">Relatos recebidos e aprovados no período selecionado.</p>{analytics.trend.length ? <div className="mt-4 h-56"><ResponsiveContainer width="100%" height="100%"><AreaChart data={analytics.trend}><CartesianGrid stroke="var(--color-border-subtle)" strokeDasharray="3 3" /><XAxis dataKey="name" tick={{ fill: 'var(--color-muted)', fontSize: 11 }} axisLine={false} tickLine={false} /><YAxis tick={{ fill: 'var(--color-muted)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} /><Tooltip /><Legend wrapperStyle={{ fontSize: 12 }} /><Area type="monotone" dataKey="received" name="Recebidos" stroke="#6c2bd9" fill="#6c2bd9" fillOpacity={0.16} strokeWidth={2} /><Area type="monotone" dataKey="approved" name="Aprovados" stroke="#14956b" fill="#14956b" fillOpacity={0.1} strokeWidth={2} /></AreaChart></ResponsiveContainer></div> : <Empty>Sem datas suficientes para exibir a tendência.</Empty>}</section><section className="urban-surface min-h-[300px] p-4 md:p-5"><h2 className="font-bold text-[var(--color-ink)]">Tipos de relatos</h2><p className="mt-1 text-xs text-[var(--color-muted)]">Distribuição por categoria.</p>{analytics.categories.length ? <div className="mt-4 h-56"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={analytics.categories.slice(0, 5)} dataKey="total" nameKey="name" innerRadius={52} outerRadius={82} paddingAngle={3}>{analytics.categories.slice(0, 5).map((entry, index) => <Cell key={entry.name} fill={COLORS[index]} />)}</Pie><Tooltip /><Legend wrapperStyle={{ fontSize: 11 }} /></PieChart></ResponsiveContainer></div> : <Empty>Sem categorias disponíveis.</Empty>}</section></section>
     <section className="urban-surface mt-4 min-h-[250px] p-4 md:p-5"><h2 className="font-bold text-[var(--color-ink)]">Relatos por bairro</h2><p className="mt-1 text-xs text-[var(--color-muted)]">Distribuição dos relatos registrados na cidade.</p>{analytics.neighborhoods.length ? <div className="mt-4 h-48"><ResponsiveContainer width="100%" height="100%"><BarChart data={analytics.neighborhoods.slice(0, 7)} layout="vertical" margin={{ left: 20 }}><CartesianGrid stroke="var(--color-border-subtle)" horizontal={false} /><XAxis type="number" allowDecimals={false} tick={{ fill: 'var(--color-muted)', fontSize: 11 }} /><YAxis type="category" dataKey="name" width={110} tick={{ fill: 'var(--color-muted)', fontSize: 11 }} /><Tooltip /><Bar dataKey="total" name="Relatos" fill="#6c2bd9" radius={[0, 5, 5, 0]} /></BarChart></ResponsiveContainer></div> : <p className="grid h-48 place-items-center text-sm text-[var(--color-muted)]">Sem bairros disponíveis.</p>}</section>
@@ -121,7 +143,7 @@ export default function DashboardMunicipal() {
     <section className="urban-surface mt-4 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5"><div className="flex min-w-0 items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[var(--color-primary-tint)] text-[var(--color-primary)]"><Building2 size={19} /></span><div className="min-w-0"><h2 className="font-bold text-[var(--color-ink)]">Bairros</h2><p className="mt-1 text-xs text-[var(--color-muted)]">Contadores de relatos por bairro {cityName ? `de ${cityName}` : 'do município'} e gestão do cadastro.</p></div></div><button type="button" onClick={openNeighborhoods} className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-primary)] px-4 text-xs font-bold text-white transition hover:brightness-95">Gerenciar bairros <ChevronRight size={15} /></button></section>
     <section className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,.7fr)]"><section className="urban-surface overflow-hidden"><div className="flex items-center justify-between gap-3 border-b border-[var(--color-border-subtle)] px-4 py-4"><div><h2 className="font-bold text-[var(--color-ink)]">Mapa dos problemas</h2><p className="mt-1 text-xs text-[var(--color-muted)]">Atualizações da cidade.</p></div><button type="button" onClick={() => navigate('/mapa')} className="text-[var(--color-primary)]" aria-label="Abrir mapa"><MapIcon size={18} /></button></div><div className="h-[300px] p-2 md:h-[380px]"><MapaDenuncia reports={municipalReports} showCityPicker={false} interactive={false} /></div></section><RecentReports reports={analytics.recent} /></section>
     <section className="urban-surface mt-5 p-4"><h2 className="font-bold text-[var(--color-ink)]">Ações rápidas</h2><p className="mt-1 text-xs text-[var(--color-muted)]">Acesse recursos disponíveis para a gestão municipal.</p><div className="mt-4 grid gap-2 md:grid-cols-3"><ActionCard icon={MapPin} title="Abrir mapa" description="Visualizar relatos no território" onClick={() => navigate('/mapa')} /><ActionCard icon={FileText} title="Ver relatos da cidade" description="Acompanhar registros publicados" onClick={() => navigate('/Report')} /><ActionCard icon={Home} title="Ir para Início" description="Voltar à página inicial" onClick={() => navigate('/home')} /></div></section>
-    </>}
+  </>}
     {view === 'reports' && <MunicipalReports cityName={cityName} token={token} initialStatus={reportFilter.status} initialNeighborhoodId={reportFilter.neighborhoodId} neighborhoods={bairros} backLabel={reportOrigin === 'neighborhoods' ? 'Voltar para bairros' : 'Voltar para o dashboard'} onBack={() => setView(reportOrigin)} />}
     {view === 'neighborhoods' && <section className="urban-surface p-4 md:p-5">
       <button type="button" onClick={() => setView('overview')} className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary)] hover:underline"><ArrowLeft size={14} /> Voltar para o dashboard</button>
