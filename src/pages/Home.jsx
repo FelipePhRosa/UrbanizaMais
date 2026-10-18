@@ -74,9 +74,9 @@ export default function Home() {
         ))}
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(360px,.78fr)]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(360px,.78fr)] pb-5">
         <section className="overflow-hidden min-h-[400px] rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-2 shadow-sm"><div className="flex items-center justify-between px-2 pb-2 pt-1"><div><h2 className="text-sm font-bold text-[var(--color-ink)]">Mapa de problemas</h2><p className="text-xs text-[var(--color-muted)]">Atualizações da comunidade</p></div><Link to="/mapa" className="text-xs font-bold text-[var(--color-primary)] hover:underline">Abrir mapa</Link></div><div className="overflow-hidden h-[390px] rounded-lg"><MapaDenuncia /></div></section>
-        <section className="min-h-[400px] overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-sm"><div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2.5"><div><h2 className="text-sm font-bold text-[var(--color-ink)]">Últimos relatos</h2><p className="mt-0.5 text-xs text-[var(--color-muted)]">Registros mais recentes.</p></div><Link to="/Report" className="text-xs font-bold text-[var(--color-primary)] hover:underline">Ver todos</Link></div><div className="overflow-hidden"><ReportCard reports={reports.slice(0, 3)} /></div></section>
+        <section className="min-h-full overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-sm"><div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2.5"><div><h2 className="text-sm font-bold text-[var(--color-ink)]">Últimos relatos</h2><p className="mt-0.5 text-xs text-[var(--color-muted)]">Registros mais recentes.</p></div><Link to="/Report" className="text-xs font-bold text-[var(--color-primary)] hover:underline">Ver todos</Link></div><div className="overflow-hidden"><ReportCard reports={reports.slice(0, 3)} /></div></section>
       </div>
     </main>
     <Link to="/reportar" className="fixed bottom-20 right-4 z-1000 grid h-11 w-11 place-items-center rounded-full bg-[var(--color-primary)] text-white shadow-lg sm:hidden" aria-label="Novo relato"><Plus size={19} /></Link>
