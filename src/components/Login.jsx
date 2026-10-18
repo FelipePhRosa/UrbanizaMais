@@ -1,10 +1,12 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { ArrowRight, LightbulbIcon, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeContext';
 import loginimg from '../assets/login.jpg';
 import loginDark from '../assets/loginDark.png'
 import Brand from './Brand';
+import ThemeBotton from './ThemeBotton';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOGIN_TIMEOUT_MS = 15000;
@@ -32,26 +34,14 @@ export default function Login() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const inFlightRef = useRef(false);
-  const attemptRef = useRef(0);
-  const [darkMode, setDarkMode] = useState(() => {
-    try {
-      const saved = localStorage.getItem('darkMode');
-      return saved ? JSON.parse(saved) : false;
-    } catch {
-      return false;
-    }
-  });
-  const navigate = useNavigate();
+  const { darkMode } = useContext(ThemeContext);
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
-
-  const toggleTheme = () => setDarkMode((previous) => !previous);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -132,7 +122,7 @@ export default function Login() {
         <p className="relative text-sm text-white/45">Urbaniza+ · Cidade melhor, juntos.</p>
       </section>
 
-      <section className="flex items-center justify-center overflow-hidden px-5 py-10 sm:px-10 bg-white dark:bg-gray-900">
+      <section className="flex items-center justify-center overflow-hidden px-5 py-10 sm:px-10 bg-[var(--color-surface)] dark:bg-[var(--color-surface)]">
         <div className="w-full max-w-[440px]">
           <div className="mb-10 lg:hidden"><Brand /></div>
           <div className="mb-8">
@@ -144,17 +134,18 @@ export default function Login() {
           <form onSubmit={handleLogin} noValidate className="space-y-5">
             <label className="block">
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">E-mail ou nome de usuário</span>
-            <span className="relative block">
-              <Mail size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
-              <input name="identifier" value={identifier} onChange={(e) => setIdentifier(e.target.value)} disabled={loading} autoComplete="username" placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60" />
-              </span>
-              </label>
+              <div className="relative block">
+                <Mail size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
+                <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/20 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black dark:text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
+              </div>
+            </label>
 
             <label className="block">
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">Senha</span>
-              <span className="relative block">
-                <LockKeyhole size={17} className="absolute left-3 top-3.5 text-[var(--color-muted)]" />
-              <input name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} autoComplete="current-password" placeholder="Digite sua senha" className="h-12 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-muted)] pl-10 pr-4 text-sm text-[var(--color-ink)] outline-none transition focus:border-[var(--color-primary)] focus:bg-white focus:ring-4 focus:ring-[var(--color-primary-tint)] disabled:cursor-not-allowed disabled:opacity-60" /></span>
+              <div className="relative block">
+                <LockKeyhole size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/30 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
+              </div>
             </label>
 
 
@@ -180,9 +171,7 @@ export default function Login() {
               <ShieldCheck size={16} className="text-[#14956b]" />
               <span className='text-gray-800 dark:text-white font-[520]'>Seus dados são protegidos.</span>
             </div>
-            <button type="button" aria-label="Alternar tema" onClick={toggleTheme} className={`mx-2 grid h-10 w-10 place-items-center rounded-2xl border transition ${darkMode ? 'border-slate-300 bg-slate-200 text-slate-700' : 'border-amber-400 bg-amber-100 text-amber-600'}`}>
-              <LightbulbIcon size={22} />
-            </button>
+            <ThemeBotton/>
           </div>
 
         </div>
