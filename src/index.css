@@ -43,6 +43,7 @@
   --urban-muted: #9aa9bd;
   --color-primary-tint: #2b1e4f;
   --color-ink: #eef2ff;
+  --color-lgn: #798092;
   --color-muted: #9aa9bd;
   --color-border: #2a3a52;
   --color-border-subtle: #223149;
@@ -161,7 +162,7 @@ body { margin: 0; min-width: 320px; background: var(--urban-bg); color: var(--co
   padding: 12px 16px;
 }
 .city-banner__detail { display: flex; min-width: 0; align-items: center; gap: 9px; }
-.city-banner__detail > svg { width: 19px; height: 19px; flex: 0 0 19px; color: #19875a; }
+.city-banner__detail > png { width: 19px; height: 19px; flex: 0 0 19px; color: #19875a; }
 .city-banner__detail > div { display: grid; min-width: 0; gap: 2px; }
 .city-banner__detail--identity { display: grid; grid-template-columns: 19px minmax(0, 1fr); }
 .city-banner__detail--identity > .city-banner__status { grid-column: 2; justify-self: center; margin: 4px 0 0; }
