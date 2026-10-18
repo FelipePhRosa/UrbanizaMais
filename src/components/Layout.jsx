@@ -31,7 +31,7 @@ function Layout({ children, hideMobileNavigation = false, fullScreen = false }) 
 
       {/* Conteúdo principal */}
       <div className={`flex-1 min-w-0 transition-[margin] duration-300 ease-linear motion-reduce:transition-none ${isSidebarOpen ? 'md:ml-60' : 'md:ml-16'} ${hideMobileNavigation ? '' : 'md:mb-0'}`}>
-        <header className="sticky top-0 z-[9999] flex h-[64px] items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-white)] dark:bg-[#162338] px-4 md:h-[72px] md:px-8">
+        <header className="sticky top-0 z-[1500] flex h-[64px] items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-white)] dark:bg-[#162338] px-4 md:h-[72px] md:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <Link to="/home" aria-label="Urbaniza+, ir para início" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] md:hidden">
               <img src="/AppLogo2.png" alt="Urbaniza+" className="h-8 w-8 rounded-lg object-contain" />
