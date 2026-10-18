@@ -30,12 +30,13 @@ function ensureContrast(hex, target = 4.5) {
   return '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
 }
 
-export default function CityBanner({ cityId, city, className = '' }) {
+export default function CityBanner({ cityId, city, coatArmsUrl, className = '' }) {
   const preset = city ?? CITIES[cityId];
   if (!preset) return null;
 
-  const { name, state, coatOfArms } = preset;
-  const color = ensureContrast(preset.color);
+  const coatOfArms = coatArmsUrl !== undefined ? coatArmsUrl : preset.coatArmsUrl ?? preset.coat_arms_url ?? preset.coatOfArms;
+  const { name, state = '' } = preset;
+  const color = ensureContrast(preset.color || '#1E7E46');
 
   return (
     <section
@@ -44,11 +45,11 @@ export default function CityBanner({ cityId, city, className = '' }) {
     >
       <div className="city-banner__layout">
         <div className="city-banner__identity" style={{ backgroundColor: color }}>
-          <img
+          {coatOfArms && <img
             src={coatOfArms}
             alt={`Brasão de ${name}`}
             className="city-banner__thumbnail"
-          />
+          />}
 
           <div className="city-banner__title">
             <p className="city-banner__eyebrow">Prefeitura Municipal</p>
@@ -64,11 +65,11 @@ export default function CityBanner({ cityId, city, className = '' }) {
 
 
           <div className="city-banner__crest-zone" aria-hidden="true">
-            <img
+            {coatOfArms && <img
               alt=""
               src={coatOfArms}
               className="city-banner__watermark"
-            />
+            />}
           </div>
         </div>
 
