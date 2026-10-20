@@ -34,9 +34,12 @@ export default function Login() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);  
   const { darkMode } = useContext(ThemeContext);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const inFlightRef = useRef(false);
+  const attemptRef = useRef(0);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
@@ -136,7 +139,7 @@ export default function Login() {
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">E-mail ou nome de usuário</span>
               <div className="relative block">
                 <Mail size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
-                <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/20 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black dark:text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
+                <input name="identifier" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required placeholder="voce@exemplo.com" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/20 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black dark:text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
               </div>
             </label>
 
@@ -144,7 +147,7 @@ export default function Login() {
               <span className="mb-2 block text-sm font-bold text-[var(--color-ink)]">Senha</span>
               <div className="relative block">
                 <LockKeyhole size={17} className="absolute left-3 top-4 text-[var(--color-muted)] dark:text-black/70" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/30 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
+                <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Digite sua senha" className="h-12 w-full rounded-xl placeholder:text-black/70 border border-gray-400 dark:border-white/30 bg-[var(--color-lgn)] pl-10 pr-4 text-sm text-black outline-none transition focus:border-[var(--color-primary)] focus:bg-slate-200 focus:text-black" />
               </div>
             </label>
 
