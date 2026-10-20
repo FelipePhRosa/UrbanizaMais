@@ -34,7 +34,7 @@ export default function CityBanner({ cityId, city, coatArmsUrl, className = '' }
   const preset = city ?? CITIES[cityId];
   if (!preset) return null;
 
-  const coatOfArms = coatArmsUrl !== undefined ? coatArmsUrl : preset.coatArmsUrl ?? preset.coat_arms_url ?? preset.coatOfArms;
+  const coatOfArms = coatArmsUrl ?? preset.coatArmsUrl ?? preset.coat_arms_url ?? preset.coatOfArms ?? preset.coat;
   const { name, state = '' } = preset;
   const color = ensureContrast(preset.color || '#1E7E46');
 
